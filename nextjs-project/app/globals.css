@@ -13,18 +13,17 @@
   --font-sans: var(--font-inter);
 
   /* Spacing — 8px base rhythm */
-  --spacing-base: 8px;
-  --spacing-sm: 1px;
-  --spacing-md: 8px;
-  --spacing-lg: 14px;
-  --spacing-xl: 24px;
-  --spacing-2xl: 32px;
-  --spacing-3xl: 40px;
+  --spacing-base: 0.5rem;
 
   /* Border radii */
   --radius-glass: 23px;
   --radius-glass-shell: 24px;
   --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-glass: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 40px 0 rgba(255, 255, 255, 0.02) inset,
+    0 0 10px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 /* Dark-mode-only base styles */
