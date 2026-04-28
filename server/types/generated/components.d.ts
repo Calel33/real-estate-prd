@@ -1,5 +1,32 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface GlobalSocialLinks extends Struct.ComponentSchema {
+  collectionName: 'components_global_social_links';
+  info: {
+    description: 'Social media platform links';
+    displayName: 'Social Links';
+    icon: 'share-alt';
+  };
+  attributes: {
+    label: Schema.Attribute.String;
+    platform: Schema.Attribute.Enumeration<
+      [
+        'facebook',
+        'twitter',
+        'instagram',
+        'linkedin',
+        'youtube',
+        'tiktok',
+        'pinterest',
+        'github',
+        'other',
+      ]
+    > &
+      Schema.Attribute.Required;
+    url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedMedia extends Struct.ComponentSchema {
   collectionName: 'components_shared_media';
   info: {
@@ -65,6 +92,7 @@ export interface SharedSlider extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'global.social-links': GlobalSocialLinks;
       'shared.media': SharedMedia;
       'shared.quote': SharedQuote;
       'shared.rich-text': SharedRichText;

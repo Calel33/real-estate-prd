@@ -30,6 +30,24 @@
       "type": "component",
       "repeatable": false,
       "component": "shared.seo"
+    },
+    "footerText": {
+      "type": "string",
+      "required": false
+    },
+    "contactEmail": {
+      "type": "email",
+      "required": false
+    },
+    "contactPhone": {
+      "type": "string",
+      "required": false,
+      "maxLength": 20
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "global.social-links"
     }
   }
 }
