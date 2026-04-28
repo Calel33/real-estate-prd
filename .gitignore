@@ -7,3 +7,22 @@ dist/
 .DS_Store
 .tmp/
 database/
+
+# Agent / IDE / tooling
+.brv/
+.codenomad/
+.vscode/
+.idea/
+
+# Build / test output
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Secrets / certs
+*.pem
+
+# Research / scratch
+RESEARCH-*.md
+
+
