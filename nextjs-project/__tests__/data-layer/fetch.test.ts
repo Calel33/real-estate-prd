@@ -311,19 +311,25 @@ describe("fetchProperty", () => {
 
 describe("fetchAbout", () => {
   it("returns about data on success", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        json: () => Promise.resolve(strapiSingleResponse(validAboutData)),
-      }),
-    );
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: () => Promise.resolve(strapiSingleResponse(validAboutData)),
+    });
+    vi.stubGlobal("fetch", mockFetch);
 
     const about = await fetchAbout();
     expect(about.siteName).toBeUndefined(); // About doesn't have siteName
     expect(about.title).toBe("About Us");
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer test-token",
+        }),
+      }),
+    );
   });
 
   it("throws on Strapi error", async () => {
@@ -361,20 +367,26 @@ describe("fetchAbout", () => {
 
 describe("fetchGlobal", () => {
   it("returns global data on success", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        json: () => Promise.resolve(strapiSingleResponse(validGlobalData)),
-      }),
-    );
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: () => Promise.resolve(strapiSingleResponse(validGlobalData)),
+    });
+    vi.stubGlobal("fetch", mockFetch);
 
     const global = await fetchGlobal();
     expect(global.siteName).toBe("Real Estate");
     expect(global.siteDescription).toBe("Premier properties");
     expect(global.socialLinks).toEqual([]);
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer test-token",
+        }),
+      }),
+    );
   });
 
   it("throws on Strapi error", async () => {

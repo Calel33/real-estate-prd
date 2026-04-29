@@ -14,7 +14,10 @@ const GlobalResponseSchema = z.object({
 export async function fetchGlobal(): Promise<Global> {
   const path = "/api/global?populate=*";
 
-  const response = await strapiFetch(path, GlobalResponseSchema);
+  const response = await strapiFetch(path, GlobalResponseSchema, {
+    useToken: true,
+    tags: ["global"],
+  });
 
   return response.data;
 }

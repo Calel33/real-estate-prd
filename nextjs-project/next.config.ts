@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
     root: ".",
   },
   images: {
+    /**
+     * Allow optimizing images from local/private IP addresses.
+     * Required because Strapi runs on localhost:1337 in development.
+     * @see https://nextjs.org/docs/app/guides/upgrading/version-16#local-ip-restriction-breaking-change
+     */
+    dangerouslyAllowLocalIP: true,
     remotePatterns: [
       {
         protocol: strapiHost.protocol,

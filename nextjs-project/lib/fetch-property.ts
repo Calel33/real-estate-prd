@@ -47,7 +47,9 @@ export async function fetchProperty(slug: string): Promise<Property | null> {
 export async function fetchProperties(): Promise<Property[]> {
   const path = `/api/properties?populate=*&filters[status][$eq]=published`;
 
-  const response = await strapiFetch(path, PropertyListResponseSchema);
+  const response = await strapiFetch(path, PropertyListResponseSchema, {
+    tags: ["properties"],
+  });
 
   return response.data;
 }

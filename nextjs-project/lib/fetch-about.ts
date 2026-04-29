@@ -14,7 +14,9 @@ const AboutResponseSchema = z.object({
 export async function fetchAbout(): Promise<About> {
   const path = "/api/about?populate=*";
 
-  const response = await strapiFetch(path, AboutResponseSchema);
+  const response = await strapiFetch(path, AboutResponseSchema, {
+    useToken: true,
+  });
 
   return response.data;
 }
