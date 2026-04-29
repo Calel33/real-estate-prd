@@ -5,8 +5,8 @@ import { z } from "zod";
  */
 export const StrapiMediaFormatSchema = z.object({
   url: z.string(),
-  width: z.number(),
-  height: z.number(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
   name: z.string(),
   size: z.number(),
   mime: z.string(),
@@ -25,8 +25,8 @@ export const StrapiMediaSchema = z.object({
   url: z.string(),
   alternativeText: z.string().nullable(),
   name: z.string(),
-  width: z.number(),
-  height: z.number(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
   formats: z.record(z.string(), StrapiMediaFormatSchema).nullable(),
   mime: z.string(),
   size: z.number(),
