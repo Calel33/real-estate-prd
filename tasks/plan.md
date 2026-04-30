@@ -1,512 +1,213 @@
-# Implementation Plan: About Page + Global SEO (Issue #9)
+# Implementation Plan: Revalidation Webhook (Issue #10)
 
 ## Overview
 
-Build the `/about` route that fetches content from Strapi's `about` single type and renders dynamic zone blocks (media, quote, rich-text, slider). Additionally, wire up `generateMetadata()` across all routes (home, properties, about, contact) using the global `defaultSeo` from Strapi for consistent SEO and Open Graph metadata.
+Implement on-demand cache revalidation so the site reflects CMS changes immediately without manual redeploy. This requires rewriting the existing `/api/revalidate` route handler to support path-based revalidation (`revalidatePath`), adding integration tests, and configuring Strapi to trigger the endpoint on property publish/unpublish events.
 
-**Blocking dependency:** Issue #3 (Foundation: Design System + Layout Shell) must be merged first, as this plan builds on top of the existing layout, fetch functions, and schema infrastructure.
+**Blocked by:** Issue #5 (must be merged first).
+
+**Key context:** The current implementation uses tag-based revalidation (`revalidateTag`) with Bearer header auth. The issue AC specifies path-based revalidation (`revalidatePath`) with query param secret. Research recommends keeping Bearer header auth (industry best practice — avoids log exposure) and supporting BOTH `revalidatePath` (precision) and `revalidateTag` (breadth).
 
 ## Architecture Decisions
 
-1. **Dynamic Zone Renderer**: Create a dedicated `DynamicZoneRenderer` component that dispatches to block-specific renderers based on `__component` discriminator. This keeps the About page clean and makes block components reusable.
-2. **Block Components**: Each dynamic zone type (`shared.media`, `shared.quote`, `shared.rich-text`, `shared.slider`) gets its own component file for testability and maintainability.
-3. **SEO Pattern**: Follow the existing `generateMetadata()` pattern from `app/page.tsx` and `app/properties/[slug]/page.tsx` — fetch global data, use `defaultSeo` for title/description/OG image.
-4. **Loading/Error States**: Reuse the pattern from existing routes — `loading.tsx` with skeleton matching layout, `error.tsx` with retry button.
-5. **Metadata for Contact**: Convert contact page from static `metadata` export to async `generateMetadata()` to pull from global settings.
+1. **Auth mechanism**: Keep `Authorization: Bearer` header instead of query param `?secret=`. Superior security — tokens don't leak into server logs, URL history, or referrer headers. Matches Strapi webhook custom header capability.
+2. **Dual revalidation**: Support BOTH `revalidatePath(path)` for specific pages (e.g., `/properties/[slug]`) AND `revalidateTag(tag, { expire: 0 })` for broad invalidation. Best of both worlds.
+3. **Strapi integration**: Document Service middleware in `server/src/index.ts` (code-based, version-controlled) instead of Admin UI webhooks. Recommended for Strapi v5.
+4. **Tag expiration profile**: Use `{ expire: 0 }` for webhook-triggered tag revalidation per Next.js 16 official docs (immediate expiration).
+5. **`revalidate: 3600` deferred**: All fetch functions currently use `revalidate: 0` (intentional fix for hero image cache staleness). Reverting to `3600` requires the webhook to be verified reliable first. Deferred to separate issue.
 
 ## Dependency Graph
 
 ```
-Strapi about single type (existing)
+Issue #5 (blocking prerequisite)
     │
-    ├── fetchAbout() (lib/fetch-about.ts — EXISTS)
-    ├── AboutSchema (lib/schemas/about.ts — EXISTS)
+    ├── Next.js route handler (MODIFY)
+    │       ├── Accepts path (query param or body) + optional tags
+    │       ├── Bearer header auth (KEEP existing)
+    │       ├── revalidatePath(path) for path-based invalidation
+    │       └── revalidateTag(tag, { expire: 0 }) for tag-based invalidation
+    │               │
+    │               └── Integration tests (CREATE)
     │
-    ├── DynamicZoneRenderer (NEW — dispatches to block components)
-    │       ├── MediaBlock (NEW)
-    │       ├── QuoteBlock (NEW)
-    │       ├── RichTextBlock (NEW — may reuse StrapiBlocksRenderer)
-    │       └── SliderBlock (NEW)
-    │
-    └── app/about/ (NEW route)
-            ├── page.tsx (Server Component)
-            ├── loading.tsx
-            └── error.tsx
-
-Global SEO (cross-cutting)
-    ├── fetchGlobal() (lib/fetch-global.ts — EXISTS)
-    ├── SeoSchema (lib/schemas/global.ts — EXISTS)
-    │
-    ├── app/page.tsx (MODIFY — already has generateMetadata, verify alignment)
-    ├── app/properties/[slug]/page.tsx (MODIFY — already has generateMetadata, verify alignment)
-    ├── app/about/page.tsx (NEW — add generateMetadata)
-    └── app/contact/page.tsx (MODIFY — convert static metadata to generateMetadata)
+    └── Strapi middleware (MODIFY server/src/index.ts)
+            ├── Fires on publish/unpublish/delete for api::property.property
+            ├── Fire-and-forget HTTP call to NextJS_REVALIDATE_URL
+            └── Uses shared REVALIDATION_SECRET env var
 ```
 
 ## Task List
 
-### Phase 1: Dynamic Zone Block Components
+### Phase 1: Route Handler Rewrite
 
-Foundation — build the reusable block renderers before wiring them into the About page.
+Rewrite the existing `/api/revalidate` endpoint to support path-based revalidation while preserving tag-based support.
 
 ---
 
-## Task 1: Create MediaBlock Component
+## Task 1: Rewrite `/api/revalidate` Route Handler
 
-**Description:** Render `shared.media` blocks from Strapi's about dynamic zone. Displays an image file with optional caption using Next.js `<Image>` component.
+**Description:** Modify `app/api/revalidate/route.ts` to accept a required `path` parameter (query param or body field), call `revalidatePath(path)` for path-based invalidation, and optionally accept `tags` for tag-based invalidation. Keep Bearer header auth. Return 400 when path is missing, 401 when secret is wrong/missing, 200 on success.
 
 **Acceptance criteria:**
-- [ ] Accepts `file` prop matching `StrapiMediaSchema` shape
-- [ ] Renders responsive image with `next/image` using Strapi URL
-- [ ] Displays `alternativeText` or `caption` as accessible alt text
-- [ ] Applies design system styling (rounded corners, glass surface treatment)
-- [ ] Handles missing/null file gracefully (renders nothing)
+- [ ] `Authorization: Bearer <correct-secret>` + `path=/properties/slug` → calls `revalidatePath('/properties/slug', 'page')` → returns 200
+- [ ] `Authorization: Bearer <wrong-secret>` → returns 401 with error message
+- [ ] No `Authorization` header → returns 401 with error message
+- [ ] Valid auth but no `path` → returns 400 with error message
+- [ ] `path` accepted from query param `?path=...` OR body field `{ "path": "..." }`
+- [ ] Optional `tags` body field still works: `{ "path": "...", "tags": ["properties"] }` revalidates both path and tags
+- [ ] `revalidateTag` uses `{ expire: 0 }` profile (not deprecated `"seconds"` string)
 
 **Verification:**
-- [ ] Component renders in isolation with mock data
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: image displays correctly at mobile/tablet/desktop widths
+- [ ] Build succeeds: `npm run build` in `nextjs-project/`
+- [ ] Manual curl test: `curl -X POST http://localhost:3000/api/revalidate -H "Authorization: Bearer test-secret" -H "Content-Type: application/json" -d '{"path":"/properties/test"}'` returns 200
+- [ ] TypeScript compiles without errors
 
-**Dependencies:** None
+**Dependencies:** None (modifies existing file)
 
 **Files likely touched:**
-- `nextjs-project/components/blocks/MediaBlock.tsx`
+- `nextjs-project/app/api/revalidate/route.ts`
 
 **Estimated scope:** Small (1 file)
-
----
-
-## Task 2: Create QuoteBlock Component ✅ COMPLETE
-
-**Description:** Render `shared.quote` blocks from Strapi's about dynamic zone. Displays a styled quote with title and body text using design system typography tokens.
-
-**Acceptance criteria:**
-- [x] Accepts `title` (string) and `body` (string) props
-- [x] Renders title with `font-display` and `text-primary` styling
-- [x] Renders body with `text-secondary/70` styling
-- [x] Includes visual quote treatment (left border or quotation mark accent)
-- [x] Fully responsive typography scaling
-
-**Verification:**
-- [x] Component renders in isolation with mock data (10 tests pass)
-- [x] Build succeeds: `npm run build`
-- [x] Manual check: quote styling matches dark glass aesthetic
-
-**Dependencies:** None
-
-**Files likely touched:**
-- `nextjs-project/components/blocks/QuoteBlock.tsx`
-
-**Estimated scope:** Small (1 file)
-
----
-
-## Task 3: Create RichTextBlock Component
-
-**Description:** Render `shared.rich-text` blocks from Strapi's about dynamic zone. Wraps the existing `StrapiBlocksRenderer` to handle the `body` field which contains Strapi rich text block nodes.
-
-**Acceptance criteria:**
-- [ ] Accepts `body` prop (string — Strapi rich text JSON or serialized blocks)
-- [ ] Delegates rendering to existing `StrapiBlocksRenderer` component
-- [ ] Handles null/empty body gracefully
-- [ ] Applies consistent spacing within the dynamic zone flow
-
-**Verification:**
-- [ ] Component renders in isolation with mock rich text data
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: rich text formatting (headings, bold, links) displays correctly
-
-**Dependencies:** Task 1 (for file structure convention)
-
-**Files likely touched:**
-- `nextjs-project/components/blocks/RichTextBlock.tsx`
-
-**Estimated scope:** Small (1 file)
-
----
-
-## Task 4: Create SliderBlock Component
-
-**Description:** Render `shared.slider` blocks from Strapi's about dynamic zone. Displays a horizontally scrollable gallery of media files with smooth scrolling behavior.
-
-**Acceptance criteria:**
-- [ ] Accepts `files` prop (array of `StrapiMediaSchema`)
-- [ ] Renders horizontally scrollable container with CSS snap points
-- [ ] Each image uses `next/image` with proper aspect ratio
-- [ ] Touch-friendly swipe scrolling on mobile
-- [ ] Handles single file and empty array gracefully
-
-**Verification:**
-- [ ] Component renders in isolation with mock file array
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: horizontal scroll works on desktop (mouse drag) and mobile (touch swipe)
-
-**Dependencies:** Task 1 (for MediaBlock reuse or image pattern)
-
-**Files likely touched:**
-- `nextjs-project/components/blocks/SliderBlock.tsx`
-
-**Estimated scope:** Small (1 file)
-
----
-
-## Task 5: Create DynamicZoneRenderer Component
-
-**Description:** Build the dispatcher component that takes an array of `AboutBlock` objects and renders the appropriate block component based on the `__component` discriminator field.
-
-**Acceptance criteria:**
-- [ ] Accepts `blocks` prop matching `AboutBlock[]` type
-- [ ] Switches on `__component` field: `shared.media` → MediaBlock, `shared.quote` → QuoteBlock, `shared.rich-text` → RichTextBlock, `shared.slider` → SliderBlock
-- [ ] Renders unknown component types with a fallback (logs warning, renders nothing or placeholder)
-- [ ] Applies consistent vertical spacing between blocks (`space-y-*`)
-- [ ] Handles null/empty blocks array (renders nothing)
-
-**Verification:**
-- [ ] Component renders with mock data containing all 4 block types
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: all block types render in correct order with proper spacing
-
-**Dependencies:** Tasks 1-4
-
-**Files likely touched:**
-- `nextjs-project/components/DynamicZoneRenderer.tsx`
-
-**Estimated scope:** Small (1-2 files)
 
 ---
 
 ### Checkpoint: Phase 1 Complete
-
-- [ ] All block components build without errors
-- [ ] DynamicZoneRenderer correctly dispatches all 4 block types
-- [ ] Manual review of block rendering with mock data
+- [ ] Route handler builds without errors
+- [ ] Manual curl tests pass for all 4 auth/path scenarios
 - [ ] **Review with human before proceeding**
 
 ---
 
-### Phase 2: About Route
+### Phase 2: Integration Tests
 
-Wire up the `/about` page as a complete vertical slice with data fetching, rendering, loading, and error states.
+Create the first tests for the revalidation endpoint, following the existing `contact.test.ts` pattern.
 
 ---
 
-## Task 6: Create About Page (Server Component)
+## Task 2: Create Revalidate Integration Tests
 
-**Description:** Create `app/about/page.tsx` as an async Server Component that fetches about content via `fetchAbout()` and renders the title + dynamic zone blocks.
+**Description:** Create `__tests__/api/revalidate.test.ts` with all 4 required test scenarios from the issue AC, plus a bonus test for tag-based revalidation. Follow the existing test patterns from `contact.test.ts` — `@vitest-environment node`, `vi.mock` for `next/cache` and `@/lib/env`, `createRequest` helper.
 
 **Acceptance criteria:**
-- [ ] Route at `/about` is accessible
-- [ ] Fetches data via `fetchAbout()` in Server Component
-- [ ] Displays page title from `about.title` field
-- [ ] Passes `about.blocks` to `DynamicZoneRenderer`
-- [ ] Has `export const dynamic = "force-dynamic"` for runtime rendering
-- [ ] Fully responsive layout (mobile, tablet, desktop)
+- [ ] Test: correct secret + valid path → `revalidatePath` called → returns 200
+- [ ] Test: wrong secret → returns 401
+- [ ] Test: no secret (missing header) → returns 401
+- [ ] Test: valid auth but missing path → returns 400
+- [ ] Bonus test: valid auth + tags body → `revalidateTag` called with `{ expire: 0 }` → returns 200
+- [ ] Mocks `revalidatePath` and `revalidateTag` from `next/cache`
+- [ ] Mocks `getEnv` from `@/lib/env` with `REVALIDATE_SECRET: "test-secret"`
 
 **Verification:**
-- [ ] `npm run dev` — navigate to `/about`, content renders
+- [ ] `npm test -- --grep "revalidate"` — all tests pass
 - [ ] Build succeeds: `npm run build`
-- [ ] Manual check: page layout matches design system (dark mode, glass surfaces, typography)
+- [ ] Test file follows same structure as `__tests__/api/contact.test.ts`
 
-**Dependencies:** Task 5
+**Dependencies:** Task 1
 
 **Files likely touched:**
-- `nextjs-project/app/about/page.tsx`
+- `nextjs-project/__tests__/api/revalidate.test.ts` (CREATE)
 
 **Estimated scope:** Small (1 file)
 
 ---
 
-## Task 7: Create About Loading State
-
-**Description:** Create `app/about/loading.tsx` with a skeleton that matches the About page layout structure (title placeholder + block placeholders).
-
-**Acceptance criteria:**
-- [ ] Title skeleton matches `font-display` size and position
-- [ ] Block skeletons approximate content height (varied heights for different block types)
-- [ ] Uses `animate-pulse` and design system colors (`bg-surface/50`)
-- [ ] Responsive — skeleton adapts to viewport width
-
-**Verification:**
-- [ ] Slow network throttle in DevTools shows loading skeleton
-- [ ] Build succeeds: `npm run build`
-- [ ] Manual check: skeleton visually matches final layout structure
-
-**Dependencies:** Task 6
-
-**Files likely touched:**
-- `nextjs-project/app/about/loading.tsx`
-
-**Estimated scope:** XS (1 file)
-
----
-
-## Task 8: Create About Error State
-
-**Description:** Create `app/about/error.tsx` with an error boundary that displays the error message and a "Try Again" retry button.
-
-**Acceptance criteria:**
-- [ ] Has `"use client"` directive (required for error boundary)
-- [ ] Displays "Something went wrong" heading with `font-display` styling
-- [ ] Shows `error.message` in secondary text color
-- [ ] "Try Again" button calls `reset()` to retry the fetch
-- [ ] Centered layout matching existing error.tsx pattern
-
-**Verification:**
-- [ ] Throw error in `fetchAbout()` — error boundary displays
-- [ ] Click "Try Again" — retry attempt occurs
-- [ ] Build succeeds: `npm run build`
-
-**Dependencies:** Task 6
-
-**Files likely touched:**
-- `nextjs-project/app/about/error.tsx`
-
-**Estimated scope:** XS (1 file)
-
----
-
-### Checkpoint: Phase 2 Complete
-
-- [ ] `/about` route renders content from Strapi
-- [ ] Loading skeleton displays during fetch
-- [ ] Error boundary catches and displays fetch failures
+### Checkpoint: Core Functionality Complete
+- [ ] All tests pass
+- [ ] Route handler works with both path and tag revalidation
 - [ ] **Review with human before proceeding**
 
 ---
 
-### Phase 3: Global SEO Across All Routes
+### Phase 3: Strapi Integration
 
-Wire up `generateMetadata()` on every route using `fetchGlobal()` and `defaultSeo`.
+Add Document Service middleware to Strapi so it automatically calls the Next.js revalidation endpoint when properties are published, unpublished, or deleted.
 
 ---
 
-## Task 9: Add SEO to About Page ✅ COMPLETE
+## Task 3: Add Strapi Document Service Middleware
 
-**Description:** Add `generateMetadata()` to `app/about/page.tsx` that fetches global settings and uses `defaultSeo` for title, description, and OG image.
+**Description:** Modify `server/src/index.ts` to register Document Service middleware that fires on `publish`, `unpublish`, and `delete` actions for `api::property.property`. Uses `setImmediate` for fire-and-forget HTTP call to the Next.js revalidation endpoint. Sends the property slug so Next.js can revalidate the specific path.
 
 **Acceptance criteria:**
-- [ ] `generateMetadata()` fetches `fetchGlobal()` 
-- [ ] Title uses `globalData.defaultSeo?.metaTitle` with site name fallback
-- [ ] Description uses `globalData.defaultSeo?.metaDescription`
-- [ ] OG image uses `globalData.defaultSeo?.shareImage` with Strapi URL
-- [ ] Metadata is correct when viewing page source / sharing link
+- [ ] Middleware registered in `register()` function of `server/src/index.ts`
+- [ ] Filters to only `api::property.property` content type
+- [ ] Triggers on `publish`, `unpublish`, and `delete` actions
+- [ ] Makes POST request to `process.env.NEXTJS_REVALIDATE_URL` with Bearer auth
+- [ ] Body includes `path` (e.g., `/properties/[slug]`) for path-based revalidation
+- [ ] Uses `setImmediate` for non-blocking fire-and-forget
+- [ ] Catches and logs errors (does not crash Strapi on webhook failure)
+- [ ] `register()` function signature uncommented: `register({ strapi })`
 
 **Verification:**
-- [ ] View page source — `<title>` and `<meta>` tags present
-- [ ] Use Open Graph preview tool or browser devtools to verify OG tags
-- [ ] Build succeeds: `npm run build`
+- [ ] Strapi dev server starts without errors
+- [ ] Manual test: publish a property in Strapi admin → check Next.js logs for revalidation call
+- [ ] TypeScript compiles: `npx tsc --noEmit` in `server/` (if applicable) or `npm run build`
 
-**Dependencies:** Task 6
+**Dependencies:** Task 1 (endpoint must exist for middleware to call)
 
 **Files likely touched:**
-- `nextjs-project/app/about/page.tsx` (add generateMetadata function)
+- `server/src/index.ts` (MODIFY — add middleware to register(), add helper function)
 
-**Estimated scope:** XS (1 file, modify existing)
+**Estimated scope:** Small (1 file)
 
 ---
 
-## Task 10: Update Contact Page to Dynamic Metadata ✅ COMPLETE
+## Task 4: Add Strapi Environment Variables
 
-**Description:** Convert `app/contact/page.tsx` from static `metadata` export to async `generateMetadata()` that fetches global settings for consistent SEO.
+**Description:** Document and ensure the required environment variables are available in the Strapi `.env` configuration. Two new vars needed: `NEXTJS_REVALIDATE_URL` (full URL to Next.js revalidate endpoint) and `REVALIDATION_SECRET` (shared secret matching Next.js `REVALIDATE_SECRET`).
 
 **Acceptance criteria:**
-- [ ] Remove static `export const metadata` 
-- [ ] Add `export async function generateMetadata()` 
-- [ ] Fetches `fetchGlobal()` for site name and defaultSeo
-- [ ] Title includes site name from global settings
-- [ ] Description uses `defaultSeo.metaDescription`
-- [ ] OG image uses `defaultSeo.shareImage` if available
+- [ ] `NEXTJS_REVALIDATE_URL` added to `server/.env.example`
+- [ ] `REVALIDATION_SECRET` added to `server/.env.example` (or documented as shared with Next.js)
+- [ ] Middleware uses `process.env.NEXTJS_REVALIDATE_URL` and `process.env.REVALIDATION_SECRET`
+- [ ] Values match the corresponding Next.js `REVALIDATE_SECRET`
 
 **Verification:**
-- [ ] View page source — `<title>` reflects global site name
-- [ ] Build succeeds: `npm run build`
-- [ ] No TypeScript errors from metadata type change
+- [ ] `server/.env.example` contains both new variables with example values
+- [ ] Middleware reads both vars correctly (no undefined warnings in dev)
 
-**Dependencies:** None (independent of About page tasks)
+**Dependencies:** Task 3
 
 **Files likely touched:**
-- `nextjs-project/app/contact/page.tsx`
+- `server/.env.example` (MODIFY)
+- `server/src/index.ts` (already modified in Task 3)
 
-**Estimated scope:** XS (1 file, modify existing)
-
----
-
-## Task 11: Verify Homepage SEO Alignment ✅ COMPLETE
-
-**Description:** Review `app/page.tsx` `generateMetadata()` to ensure it follows the same pattern as other routes and uses all available `defaultSeo` fields consistently.
-
-**Acceptance criteria:**
-- [ ] Title uses `globalData.siteName` (already implemented)
-- [ ] Description uses `globalData.defaultSeo?.metaDescription` (already implemented)
-- [ ] OG image uses `globalData.defaultSeo?.shareImage` (already implemented)
-- [ ] No hardcoded "Zenith" strings — all from global settings
-- [ ] Code style matches other routes' `generateMetadata()` implementations
-
-**Verification:**
-- [ ] Read `app/page.tsx` — confirm alignment with Tasks 9 and 10
-- [ ] Build succeeds: `npm run build`
-- [ ] If changes needed, implement and re-verify
-
-**Dependencies:** Tasks 9, 10 (for pattern consistency comparison)
-
-**Files likely touched:**
-- `nextjs-project/app/page.tsx` (possibly no changes, just verification)
-
-**Estimated scope:** XS (1 file, read-only or minor edits)
-
----
-
-## Task 12: Verify Property Page SEO Alignment ✅ COMPLETE
-
-**Description:** Review `app/properties/[slug]/page.tsx` `generateMetadata()` to ensure per-property metadata uses property title, description, and hero image as OG image consistently.
-
-**Acceptance criteria:**
-- [ ] Title format: `${property.title} — ${globalData.siteName}` (update from hardcoded "Zenith")
-- [ ] Description uses property location/acreage details (already implemented)
-- [ ] OG image uses `property.heroImage` (already implemented)
-- [ ] Falls back to `defaultSeo.shareImage` if property has no hero image
-- [ ] Code style matches other routes' `generateMetadata()` implementations
-
-**Verification:**
-- [ ] Read `app/properties/[slug]/page.tsx` — confirm alignment
-- [ ] Build succeeds: `npm run build`
-- [ ] If changes needed (e.g., fetching global for site name), implement and re-verify
-
-**Dependencies:** Tasks 9, 10 (for pattern consistency)
-
-**Files likely touched:**
-- `nextjs-project/app/properties/[slug]/page.tsx` (possibly modify title to use global siteName)
-
-**Estimated scope:** Small (1 file, minor edits)
-
----
-
-### Checkpoint: Phase 3 Complete
-
-- [ ] All 4 routes (home, properties, about, contact) have `generateMetadata()`
-- [ ] All routes use global `defaultSeo` for consistent branding
-- [ ] Property pages use per-property metadata with hero image OG
-- [ ] **Review with human before proceeding**
-
----
-
-### Phase 4: Testing & Polish
-
-Add tests and final verification.
-
----
-
-## Task 13: Write Tests for Dynamic Zone Components
-
-**Description:** Write unit tests for `DynamicZoneRenderer` and each block component to verify correct rendering and edge cases.
-
-**Acceptance criteria:**
-- [ ] `MediaBlock` test: renders image with correct src, handles null file
-- [ ] `QuoteBlock` test: renders title and body, handles missing props
-- [ ] `RichTextBlock` test: delegates to StrapiBlocksRenderer, handles empty body
-- [ ] `SliderBlock` test: renders multiple images, handles empty array
-- [ ] `DynamicZoneRenderer` test: dispatches all 4 block types, handles unknown type, handles empty array
-
-**Verification:**
-- [ ] `npm test` — all new tests pass
-- [ ] Build succeeds: `npm run build`
-- [ ] Test coverage includes happy path and edge cases
-
-**Dependencies:** Tasks 1-5
-
-**Files likely touched:**
-- `nextjs-project/components/blocks/MediaBlock.test.tsx`
-- `nextjs-project/components/blocks/QuoteBlock.test.tsx`
-- `nextjs-project/components/blocks/RichTextBlock.test.tsx`
-- `nextjs-project/components/blocks/SliderBlock.test.tsx`
-- `nextjs-project/components/DynamicZoneRenderer.test.tsx`
-
-**Estimated scope:** Medium (5 test files)
-
----
-
-## Task 14: Write Tests for About Page
-
-**Description:** Write tests for the About page route including loading state, error state, and successful rendering.
-
-**Acceptance criteria:**
-- [ ] `page.test.tsx`: renders title and blocks when fetch succeeds
-- [ ] `loading.test.tsx`: renders skeleton structure
-- [ ] `error.test.tsx`: renders error message and retry button
-
-**Verification:**
-- [ ] `npm test` — all tests pass
-- [ ] Build succeeds: `npm run build`
-- [ ] Test patterns match existing route tests (`app/page.test.tsx`, `app/properties/[slug]/page.test.tsx`)
-
-**Dependencies:** Tasks 6-8
-
-**Files likely touched:**
-- `nextjs-project/app/about/page.test.tsx`
-- `nextjs-project/app/about/loading.test.tsx`
-- `nextjs-project/app/about/error.test.tsx`
-
-**Estimated scope:** Medium (3 test files)
-
----
-
-## Task 15: End-to-End Manual Verification
-
-**Description:** Complete manual verification of the entire feature against all acceptance criteria from Issue #9.
-
-**Acceptance criteria:**
-- [ ] `/about` route fetches content via `fetchAbout()` in Server Component
-- [ ] Dynamic zone block renderer handles all 4 component types
-- [ ] About page content renders from Strapi single type
-- [ ] `generateMetadata()` implemented on every route (home, properties, about, contact)
-- [ ] Per-property metadata uses property title, description, and hero image as OG image
-- [ ] Loading skeleton matches layout structure during data fetch
-- [ ] Error boundary displays error message with retry button on fetch failure
-- [ ] Fully responsive on mobile, tablet, desktop
-
-**Verification:**
-- [ ] `npm run build` — production build succeeds
-- [ ] `npm run dev` — manual navigation through all routes
-- [ ] DevTools responsive mode: test at 375px, 768px, 1024px, 1440px
-- [ ] View source on each route — verify meta tags
-- [ ] Simulate Strapi downtime — verify error states
-
-**Dependencies:** Tasks 1-14
-
-**Files likely touched:** None (verification only)
-
-**Estimated scope:** Verification task
+**Estimated scope:** XS (1 file)
 
 ---
 
 ### Checkpoint: Complete
-
-- [ ] All tests pass: `npm test`
-- [ ] Production build succeeds: `npm run build`
-- [ ] All acceptance criteria from Issue #9 verified
+- [ ] All tests pass: `npm test` in `nextjs-project/`
+- [ ] Next.js build succeeds: `npm run build`
+- [ ] Strapi dev server starts without errors
+- [ ] Manual end-to-end test: publish property in Strapi → Next.js page revalidates
 - [ ] **Final review with human — ready for merge**
 
 ---
+
+## Deferred: Time-Based Revalidation (Separate Issue)
+
+The following work is identified in the issue AC but intentionally deferred:
+
+| Item | Current State | Reason for Deferral |
+|------|--------------|---------------------|
+| `DEFAULT_REVALIDATE` 0 → 3600 | All fetches use `revalidate: 0` | Was intentional fix for hero image staleness. Requires webhook reliability first. |
+| Remove `revalidate: 0` overrides | `fetch-property.ts`, `fetch-about.ts`, `fetch-global.ts` all override to 0 | Same reason — need reliable webhook before enabling time-based caching |
+| Update fetch tests | Tests expect `revalidate: 0` | Follows from above |
+
+**Recommendation:** Create a follow-up issue "Enable Time-Based Revalidation" that depends on this issue being merged and verified in production for at least 1 week.
 
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Strapi `about` single type schema differs from expected | High | Verify schema with `GET /api/about?populate=*` before Task 6 |
-| `defaultSeo.shareImage` URL format inconsistent | Medium | Check existing `app/page.tsx` implementation for URL construction pattern |
-| Rich text `body` field format differs from `StrapiBlocksRenderer` expectations | Medium | Inspect actual Strapi response in Task 3, adapt wrapper accordingly |
-| SliderBlock CSS scroll-snap not smooth on all browsers | Low | Use well-supported CSS properties, test on multiple viewports |
+| Acceptance criteria says query param secret, we use header auth | 🟡 Policy conflict | Document rationale in PR — header auth is industry best practice, avoids log exposure |
+| `revalidate: 0` vs `revalidate: 3600` pre-condition not met | 🔴 AC #8 cannot be satisfied | Explicitly deferred with rationale; document dependency on webhook reliability |
+| Strapi middleware fire-and-forget silent failures | 🟡 Revalidation may not trigger | Error logging in middleware; consider retry queue for production |
+| `revalidateTag(tag, "seconds")` deprecated signature | 🟡 Current code uses deprecated form | Task 1 changes to `{ expire: 0 }` per Next.js 16 docs |
+| `revalidatePath` with dynamic segments requires `type` param | 🟡 May fail without `'page'` type | Task 1 always passes `'page'` as second argument for property paths |
 
 ## Open Questions
 
-1. **Strapi content readiness:** Is the `about` single type already populated with content in the development Strapi instance, or does it need to be seeded first?
-2. **Block ordering:** Should dynamic zone blocks render in the exact order returned by Strapi, or is there a preferred display order?
-3. **Slider interaction:** Should the slider have navigation arrows/dots, or is pure scroll-snap sufficient for v1?
-4. **SEO fallback hierarchy:** If `defaultSeo` is null, should we fall back to `siteDescription` and `siteName`, or use hardcoded defaults?
-
-## Parallelization Opportunities
-
-- **Tasks 1-4** (block components) can be developed in parallel — they are independent of each other
-- **Task 10** (contact metadata) can be done in parallel with Phase 1 — no dependency on About page
-- **Tasks 11-12** (SEO verification) can be done in parallel with each other
-- **Tasks 13-14** (tests) can be written in parallel once components exist
+1. **Strapi env var naming:** Should Strapi use `REVALIDATION_SECRET` (as shown in research) or `REVALIDATE_SECRET` (matching Next.js naming)? Recommendation: use same name in both projects for clarity.
+2. **Path format for Strapi → Next.js:** Should Strapi send `/properties/[slug]` (pattern) or `/properties/actual-slug-value` (concrete)? Recommendation: concrete path for precise invalidation.
+3. **Multiple property pages:** When a property is unpublished, should we also revalidate the homepage (`/`) and properties listing (`/properties`) since the featured property may change? Recommendation: include `tags: ["properties", "global"]` alongside path for comprehensive invalidation.

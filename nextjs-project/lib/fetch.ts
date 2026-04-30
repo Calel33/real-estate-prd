@@ -16,6 +16,17 @@ export class StrapiError extends Error {
   }
 }
 
+/** Error thrown when Strapi is unreachable (network/connection error). */
+export class StrapiNetworkError extends Error {
+  constructor(
+    message: string,
+    public readonly originalError: unknown,
+  ) {
+    super(message);
+    this.name = "StrapiNetworkError";
+  }
+}
+
 /** Error thrown when Zod validation of Strapi response fails. */
 export class StrapiValidationError extends Error {
   constructor(
@@ -76,7 +87,23 @@ export async function strapiFetch<T>(
     fetchOptions.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(url, fetchOptions);
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch (error) {
+    const cause =
+      error instanceof Error && "code" in error
+        ? (error as Error & { code: string }).code
+        : undefined;
+    const hint =
+      cause === "ECONNREFUSED"
+        ? "Is the Strapi server running? Start it with `npm run dev` in the server/ directory."
+        : undefined;
+    throw new StrapiNetworkError(
+      `Failed to connect to Strapi at ${url}: ${error instanceof Error ? error.message : String(error)}${hint ? `\n${hint}` : ""}`,
+      error,
+    );
+  }
 
   if (!response.ok) {
     let errorMessage: string | undefined;

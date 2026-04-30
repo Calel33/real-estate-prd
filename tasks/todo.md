@@ -1,77 +1,45 @@
-# Task List: About Page + Global SEO (Issue #9)
+# Task List: Revalidation Webhook (Issue #10)
 
-## Phase 1: Dynamic Zone Block Components
+## Phase 1: Route Handler Rewrite
 
-- [x] Task 1: Create MediaBlock Component
-- [x] Task 2: Create QuoteBlock Component
-- [x] Task 3: Create RichTextBlock Component
-- [x] Task 4: Create SliderBlock Component
-- [x] Task 5: Create DynamicZoneRenderer Component
+- [x] Task 1: Rewrite `/api/revalidate` Route Handler
 
 ### Checkpoint: Phase 1 Complete
-- [ ] All block components build without errors
-- [x] DynamicZoneRenderer correctly dispatches all 4 block types
-- [x] Manual review of block rendering with mock data
-- [ ] **Review with human before proceeding**
+- [x] Route handler builds without errors
+- [x] Manual curl tests pass for all 4 auth/path scenarios
+- [x] **Review with human before proceeding**
 
-## Phase 2: About Route
+## Phase 2: Integration Tests
 
-- [x] Task 6: Create About Page (Server Component)
-- [x] Task 7: Create About Loading State
-- [x] Task 8: Create About Error State
+- [x] Task 2: Create Revalidate Integration Tests
 
-### Checkpoint: Phase 2 Complete
-- [ ] `/about` route renders content from Strapi
-- [ ] Loading skeleton displays during fetch
-- [ ] Error boundary catches and displays fetch failures
-- [ ] **Review with human before proceeding**
+### Checkpoint: Core Functionality Complete
+- [x] All tests pass
+- [x] Route handler works with both path and tag revalidation
+- [x] **Review with human before proceeding**
 
-## Phase 3: Global SEO Across All Routes
+## Phase 3: Strapi Integration
 
-- [ ] Task 9: Add SEO to About Page
-- [ ] Task 10: Update Contact Page to Dynamic Metadata
-- [ ] Task 11: Verify Homepage SEO Alignment
-- [ ] Task 12: Verify Property Page SEO Alignment
-
-### Checkpoint: Phase 3 Complete
-- [ ] All 4 routes have `generateMetadata()`
-- [ ] All routes use global `defaultSeo` for consistent branding
-- [ ] Property pages use per-property metadata with hero image OG
-- [ ] **Review with human before proceeding**
-
-## Phase 4: Testing & Polish
-
-- [ ] Task 13: Write Tests for Dynamic Zone Components
-- [ ] Task 14: Write Tests for About Page
-- [ ] Task 15: End-to-End Manual Verification
+- [x] Task 3: Add Strapi Document Service Middleware
+- [x] Task 4: Add Strapi Environment Variables
 
 ### Checkpoint: Complete
-- [ ] All tests pass: `npm test`
-- [ ] Production build succeeds: `npm run build`
-- [ ] All acceptance criteria from Issue #9 verified
+- [x] All tests pass: `npm test` in `nextjs-project/`
+- [x] Next.js build succeeds: `npm run build`
+- [ ] Strapi dev server starts without errors
+- [ ] Manual end-to-end test: publish property in Strapi → Next.js page revalidates
 - [ ] **Final review with human — ready for merge**
 
 ## Task Dependencies
 
 ```
-Task 1 ──┐
-Task 2 ──┤
-Task 3 ──┼──→ Task 5 ──→ Task 6 ──→ Task 7
-Task 4 ──┘                    │        │
-                              │        └──→ Task 8
-                              │
-                              └──→ Task 9
-
-Task 10 (independent — can run in parallel with Phase 1)
-
-Task 9 ──┐
-Task 10 ─┼──→ Task 11
-         └──→ Task 12
-
-Task 5 ──→ Task 13
-Task 6 ──→ Task 14
-
-Task 13 ──┐
-Task 14 ──┼──→ Task 15
-Task 12 ──┘
+Task 1 ──→ Task 2
+              │
+              └──→ Task 3 ──→ Task 4
 ```
+
+## Deferred (Separate Issue)
+
+- [ ] Change `DEFAULT_REVALIDATE` from `0` to `3600` in `lib/fetch.ts`
+- [ ] Remove `revalidate: 0` overrides in `fetch-property.ts`, `fetch-about.ts`, `fetch-global.ts`
+- [ ] Update fetch tests to expect `revalidate: 3600`

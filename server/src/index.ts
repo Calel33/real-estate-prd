@@ -11,9 +11,32 @@ export default {
     // Document Service middleware: fires on property publish/unpublish/delete
     // to trigger Next.js cache revalidation via webhook.
     strapi.documents.use(async (context, next) => {
+      const relevantTypes = ['api::property.property'];
+
+      // Pre-capture slug for delete actions — Strapi v5's delete result may
+      // not include the slug field, so we look it up before the document is
+      // removed via findOne({ documentId }).
+      // Falls back to result?.slug if the pre-lookup fails.
+      let preCapturedSlug: string | undefined;
+      if (
+        relevantTypes.includes(context.uid) &&
+        context.action === 'delete'
+      ) {
+        try {
+          const params = context.params as { documentId?: string } | undefined;
+          if (params?.documentId) {
+            const doc = await strapi
+              .documents('api::property.property')
+              .findOne({ documentId: params.documentId });
+            preCapturedSlug = (doc as { slug?: string } | null)?.slug;
+          }
+        } catch {
+          // Pre-lookup failed — will fall back to result?.slug below
+        }
+      }
+
       const result = await next();
 
-      const relevantTypes = ['api::property.property'];
       if (!relevantTypes.includes(context.uid)) return result;
 
       if (['publish', 'unpublish', 'delete'].includes(context.action)) {
@@ -29,8 +52,12 @@ export default {
               return;
             }
 
-            // Extract slug from the result to build the concrete path
-            const slug = result?.slug;
+            // For delete, use pre-captured slug (document exists before next()).
+            // For publish/unpublish, use the result slug (document returned after next()).
+            const slug =
+              context.action === 'delete'
+                ? preCapturedSlug ?? (result as { slug?: string } | undefined)?.slug
+                : (result as { slug?: string } | undefined)?.slug;
             const path = slug ? `/properties/${slug}` : '/properties';
 
             await fetch(url, {
