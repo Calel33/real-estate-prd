@@ -61,7 +61,7 @@ describe("SliderBlock", () => {
     const images = screen.getAllByRole("img");
     expect(images).toHaveLength(3);
 
-    images.forEach((img, i) => {
+    images.forEach((img) => {
       const src = img.getAttribute("src") ?? "";
       expect(src).toContain("localhost");
       expect(src).toContain("uploads");

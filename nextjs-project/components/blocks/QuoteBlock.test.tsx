@@ -104,7 +104,7 @@ describe("QuoteBlock", () => {
   });
 
   it("applies italic styling to the quote body for visual distinction", () => {
-    const { container } = render(
+    render(
       <QuoteBlock title="Author" body="An italic quote." />,
     );
 

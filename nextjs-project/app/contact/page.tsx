@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
+import { fetchGlobal } from "@/lib/fetch-global";
+import { getEnv } from "@/lib/env";
 import { ContactForm } from "@/components/ContactForm";
 
-export const metadata: Metadata = {
-  title: "Contact | Zenith Real Estate",
-  description:
-    "Get in touch with Zenith Real Estate. Send us a message about any property or inquiry.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const globalData = await fetchGlobal();
+
+  return {
+    title:
+      globalData.defaultSeo?.metaTitle ??
+      `Contact — ${globalData.siteName}`,
+    description:
+      globalData.defaultSeo?.metaDescription ?? globalData.siteDescription,
+    openGraph: globalData.defaultSeo?.shareImage
+      ? {
+          images: [
+            {
+              url: `${getEnv().STRAPI_URL}${globalData.defaultSeo.shareImage.url}`,
+            },
+          ],
+        }
+      : undefined,
+  };
+}
 
 export default function ContactPage() {
   return (

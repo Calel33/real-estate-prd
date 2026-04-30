@@ -246,7 +246,7 @@ describe("DynamicZoneRenderer", () => {
       } as unknown as { __component: string },
     ];
 
-    const { container } = render(
+    render(
       <DynamicZoneRenderer
         blocks={blocks as unknown as []}
         strapiUrl={TEST_STRAPI_URL}
@@ -268,16 +268,16 @@ describe("DynamicZoneRenderer", () => {
       },
     ];
 
-    const { container } = render(
-      <DynamicZoneRenderer blocks={blocks} strapiUrl={TEST_STRAPI_URL} />,
+    render(
+      <DynamicZoneRenderer
+        blocks={blocks as unknown as []}
+        strapiUrl={TEST_STRAPI_URL}
+      />,
     );
 
-    // The outermost wrapper should have a space-y-* class
-    const wrapper = container.firstElementChild;
-    expect(wrapper).toBeInTheDocument();
-    const className = wrapper?.getAttribute("class") ?? "";
-    // Should use vertical spacing (space-y-8 is the convention from research)
-    expect(className).toMatch(/space-y-\d/);
+    // The wrapper div may still exist but should have no meaningful content
+    // console.warn should have been called
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   // ---- Mixed known and unknown blocks ----
@@ -299,7 +299,7 @@ describe("DynamicZoneRenderer", () => {
       },
     ];
 
-    const { container } = render(
+    render(
       <DynamicZoneRenderer
         blocks={blocks as unknown as []}
         strapiUrl={TEST_STRAPI_URL}

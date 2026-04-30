@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { fetchProperty } from "@/lib/fetch-property";
+import { fetchGlobal } from "@/lib/fetch-global";
 import { getEnv } from "@/lib/env";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
@@ -17,7 +18,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const property = await fetchProperty(slug);
+  const [property, globalData] = await Promise.all([
+    fetchProperty(slug),
+    fetchGlobal(),
+  ]);
 
   if (!property) {
     return { title: "Property Not Found" };
@@ -25,14 +29,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const strapiUrl = getEnv().STRAPI_URL;
 
+  const ogImage = property.heroImage ?? globalData.defaultSeo?.shareImage;
+
   return {
-    title: `${property.title} — Zenith`,
+    title: `${property.title} — ${globalData.siteName}`,
     description: property.location
       ? `${property.title} in ${property.location}. ${property.acreage ?? ""} acres.`
       : `${property.title} — View property details.`,
-    openGraph: property.heroImage
+    openGraph: ogImage
       ? {
-          images: [{ url: `${strapiUrl}${property.heroImage.url}` }],
+          images: [{ url: `${strapiUrl}${ogImage.url}` }],
         }
       : undefined,
   };
