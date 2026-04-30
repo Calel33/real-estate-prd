@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { getEnv } from "@/lib/env";
 
-/** Default revalidation interval in seconds (1 hour). */
-const DEFAULT_REVALIDATE = 3600;
+/** Default no-cache — CMS-driven content changes frequently. Set > 0 for ISR. */
+const DEFAULT_REVALIDATE = 0;
 
 /** Error thrown when Strapi returns a non-2xx response. */
 export class StrapiError extends Error {

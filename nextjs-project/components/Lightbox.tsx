@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import type { StrapiMedia } from "@/lib/schemas/strapi";
 
@@ -18,6 +18,7 @@ interface LightboxProps {
  *
  * Features:
  * - Keyboard navigation (ArrowLeft/ArrowRight for prev/next, Escape to close)
+ * - Swipe support on mobile (touch-based horizontal swipe)
  * - Click on backdrop or close button to dismiss
  * - Image counter display
  * - Wraps around when navigating past first/last image
@@ -31,6 +32,9 @@ export function Lightbox({
   onNavigate,
 }: LightboxProps) {
   const currentImage = images[currentIndex];
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const SWIPE_THRESHOLD = 50;
 
   const goToPrev = useCallback(() => {
     const prevIndex =
@@ -43,6 +47,26 @@ export function Lightbox({
       currentIndex < images.length - 1 ? currentIndex + 1 : 0;
     onNavigate(nextIndex);
   }, [currentIndex, images.length, onNavigate]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = 0;
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) < SWIPE_THRESHOLD) return;
+    if (diff > 0) {
+      goToNext();
+    } else {
+      goToPrev();
+    }
+  }, [goToNext, goToPrev]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -75,10 +99,13 @@ export function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm touch-pan-y"
       role="dialog"
       aria-label="Image lightbox"
       aria-modal="true"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Close button */}
       <button

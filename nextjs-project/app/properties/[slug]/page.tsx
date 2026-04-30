@@ -6,6 +6,7 @@ import { fetchProperty } from "@/lib/fetch-property";
 import { getEnv } from "@/lib/env";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
+import { HeroSection } from "@/components/HeroSection";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
@@ -46,53 +47,21 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
 
   const strapiUrl = getEnv().STRAPI_URL;
-  const { title, location, acreage, propertyType, description, heroImage, heroVideo, gallery, mapImage } = property;
+  const { title, location, acreage, propertyType, description, gallery, mapImage } = property;
 
   return (
     <>
       {/* Hero Section */}
-      <section
-        aria-label={`${title} hero`}
-        className="relative h-screen w-full overflow-hidden"
-      >
-        {heroVideo ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster={heroImage ? `${strapiUrl}${heroImage.url}` : undefined}
-            className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source src={`${strapiUrl}${heroVideo.url}`} type={heroVideo.mime} />
-          </video>
-        ) : heroImage ? (
-          <Image
-            src={`${strapiUrl}${heroImage.url}`}
-            alt={heroImage.alternativeText ?? title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-        ) : null}
-
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-
-        {/* Content overlay */}
-        <div className="relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24">
-          <h1 className="font-display text-5xl md:text-8xl text-secondary leading-tight mt-2">
-            {title}
-          </h1>
-          {location && (
-            <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
-              {location}
-            </p>
-          )}
-        </div>
-      </section>
+      <HeroSection property={property} strapiUrl={strapiUrl}>
+        <h1 className="font-display text-5xl md:text-8xl text-secondary leading-tight mt-2">
+          {title}
+        </h1>
+        {location && (
+          <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
+            {location}
+          </p>
+        )}
+      </HeroSection>
 
       {/* Property Details */}
       <section aria-label="Property details" className="py-16 md:py-24">

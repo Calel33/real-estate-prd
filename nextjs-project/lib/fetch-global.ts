@@ -15,6 +15,7 @@ export async function fetchGlobal(): Promise<Global> {
   const path = "/api/global?populate=*";
 
   const response = await strapiFetch(path, GlobalResponseSchema, {
+    revalidate: 0, // Always fetch fresh data — global settings change
     useToken: true,
     tags: ["global"],
   });

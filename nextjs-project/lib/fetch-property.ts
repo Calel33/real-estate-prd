@@ -36,7 +36,9 @@ const PropertyListResponseSchema = z.object({
 export async function fetchProperty(slug: string): Promise<Property | null> {
   const path = `/api/properties?populate=*&filters[slug][$eq]=${encodeURIComponent(slug)}`;
 
-  const response = await strapiFetch(path, SinglePropertyResponseSchema);
+  const response = await strapiFetch(path, SinglePropertyResponseSchema, {
+    revalidate: 0, // Always fetch fresh data — properties change frequently
+  });
 
   return response.data.length > 0 ? response.data[0] : null;
 }
@@ -48,6 +50,7 @@ export async function fetchProperties(): Promise<Property[]> {
   const path = `/api/properties?populate=*&filters[status][$eq]=published`;
 
   const response = await strapiFetch(path, PropertyListResponseSchema, {
+    revalidate: 0, // Always fetch fresh data — properties change frequently
     tags: ["properties"],
   });
 

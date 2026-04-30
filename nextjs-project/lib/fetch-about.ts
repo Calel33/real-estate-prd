@@ -15,6 +15,7 @@ export async function fetchAbout(): Promise<About> {
   const path = "/api/about?populate=*";
 
   const response = await strapiFetch(path, AboutResponseSchema, {
+    revalidate: 0, // Always fetch fresh data — content changes frequently
     useToken: true,
   });
 
