@@ -11,6 +11,10 @@ const envSchema = z.object({
   RESEND_API_KEY: z.string().min(1, "RESEND_API_KEY is required"),
   REVALIDATE_SECRET: z.string().min(1, "REVALIDATE_SECRET is required"),
   RESEND_FROM_EMAIL: z.string().email("RESEND_FROM_EMAIL must be a valid email"),
+  ADMIN_NOTIFICATION_EMAIL: z
+    .string()
+    .email("ADMIN_NOTIFICATION_EMAIL must be a valid email")
+    .optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -29,6 +33,10 @@ export function parseEnv(overrides?: Partial<Env>): Env {
       overrides?.REVALIDATE_SECRET ?? process.env.REVALIDATE_SECRET,
     RESEND_FROM_EMAIL:
       overrides?.RESEND_FROM_EMAIL ?? process.env.RESEND_FROM_EMAIL,
+    ADMIN_NOTIFICATION_EMAIL:
+      overrides?.ADMIN_NOTIFICATION_EMAIL ??
+      process.env.ADMIN_NOTIFICATION_EMAIL ??
+      undefined,
   };
 
   const result = envSchema.safeParse(raw);

@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { strapiFetch, StrapiError, StrapiValidationError } from "@/lib/fetch";
-import { fetchProperty, fetchProperties, createSubmission } from "@/lib/fetch-property";
+import { fetchProperty, fetchProperties } from "@/lib/fetch-property";
+import { createSubmission } from "@/lib/fetch-submission";
 import { fetchAbout } from "@/lib/fetch-about";
 import { fetchGlobal } from "@/lib/fetch-global";
 import { resetEnv } from "@/lib/env";
@@ -119,7 +120,7 @@ describe("strapiFetch", () => {
     expect(fetch).toHaveBeenCalledWith(
       `${TEST_STRAPI_URL}/api/test`,
       expect.objectContaining({
-        next: expect.objectContaining({ revalidate: 3600 }),
+        next: expect.objectContaining({ revalidate: 0 }),
       }),
     );
   });

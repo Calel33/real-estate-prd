@@ -6,10 +6,13 @@ import { cleanup } from "@testing-library/react";
 
 // Fully reset DOM between tests to prevent <html>/<body> accumulation
 // (Layout components render <html>/<body> which jsdom doesn't clean fully)
+// Guard: node-environment tests don't have `document` (e.g., route handler tests)
 afterEach(() => {
   cleanup();
-  document.head.innerHTML = "";
-  document.body.innerHTML = "";
+  if (typeof document !== "undefined") {
+    document.head.innerHTML = "";
+    document.body.innerHTML = "";
+  }
 });
 
 // Mock next/font/google so tests don't need build-time font loading

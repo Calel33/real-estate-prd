@@ -53,7 +53,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     <>
       {/* Hero Section */}
       <HeroSection property={property} strapiUrl={strapiUrl}>
-        <h1 className="font-display text-5xl md:text-8xl text-secondary leading-tight mt-2">
+        <h1 className="font-display text-5xl md:text-8xl text-primary leading-tight mt-2">
           {title}
         </h1>
         {location && (
