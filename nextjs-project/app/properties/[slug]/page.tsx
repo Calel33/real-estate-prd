@@ -5,7 +5,7 @@ import Link from "next/link";
 import { fetchProperty } from "@/lib/fetch-property";
 import { getEnv } from "@/lib/env";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
-import { ImageGalleryGrid } from "@/components/ImageGalleryGrid";
+import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
@@ -141,8 +141,8 @@ export default async function PropertyDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Gallery Grid */}
-      <ImageGalleryGrid images={gallery ?? []} strapiUrl={strapiUrl} />
+      {/* Gallery Grid with Lightbox */}
+      <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />
 
       {/* Map Image */}
       {mapImage && (
