@@ -16,9 +16,9 @@
 
 ## Phase 2: About Route
 
-- [ ] Task 6: Create About Page (Server Component)
-- [ ] Task 7: Create About Loading State
-- [ ] Task 8: Create About Error State
+- [x] Task 6: Create About Page (Server Component)
+- [x] Task 7: Create About Loading State
+- [x] Task 8: Create About Error State
 
 ### Checkpoint: Phase 2 Complete
 - [ ] `/about` route renders content from Strapi
