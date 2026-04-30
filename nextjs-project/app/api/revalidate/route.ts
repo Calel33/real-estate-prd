@@ -1,19 +1,27 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { getEnv } from "@/lib/env";
 
 /**
- * On-demand revalidation endpoint for Strapi webhooks.
+ * On-demand cache revalidation endpoint for Strapi webhooks.
  *
- * Strapi calls this when content changes (e.g., property updated,
- * hero image replaced), passing a secret and optional tags.
+ * Supports BOTH path-based (`revalidatePath`) and tag-based (`revalidateTag`)
+ * invalidation. Designed for Programmable Webhooks in the Vercel dashboard
+ * or Strapi lifecycle middleware.
+ *
+ * Auth: Bearer token in Authorization header (recommended for webhooks).
+ *       Tokens in query params are logged by proxies/CDNs — avoid them.
  *
  * Usage:
+ *   POST /api/revalidate?path=/properties/my-property
+ *   Headers: { Authorization: Bearer <REVALIDATE_SECRET> }
+ *
  *   POST /api/revalidate
  *   Headers: { Authorization: Bearer <REVALIDATE_SECRET> }
- *   Body (optional): { tags?: string[] }
+ *   Body: { "path": "/properties/my-property", "tags": ["properties", "global"] }
  *
- * If no tags are specified, both "properties" and "global" are revalidated.
+ * Path can be provided via query param OR body. Tags are optional.
+ * revalidateTag uses { expire: 0 } for immediate expiration (Next.js 16).
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const env = getEnv();
@@ -26,30 +34,74 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ message: "Invalid token" }, { status: 401 });
   }
 
-  // Parse optional tags from body
-  let tags: string[] = ["properties", "global"];
+  // Extract path from query param or body
+  let path: string | null =
+    request.nextUrl.searchParams.get("path") ?? null;
+  let tags: string[] | null = null;
+
+  // Try to parse body for path/tags (body values override query param)
   try {
-    const body = (await request.json()) as { tags?: string[] };
+    const body = (await request.json()) as {
+      path?: string;
+      tags?: string[];
+    };
+
+    if (body.path) {
+      path = body.path;
+    }
+
     if (Array.isArray(body.tags) && body.tags.length > 0) {
       tags = body.tags;
     }
   } catch {
-    // No body or invalid JSON — use default tags
+    // No body or invalid JSON — use query param path only
   }
 
-  // Revalidate each tag
-  const results = tags.map((tag) => {
-    try {
-      revalidateTag(tag, "seconds");
-      return { tag, revalidated: true };
-    } catch (error) {
-      return {
-        tag,
-        revalidated: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      };
+  // Validate: path is required
+  if (!path) {
+    return NextResponse.json(
+      { message: "Missing path parameter" },
+      { status: 400 },
+    );
+  }
+
+  const results: Array<{
+    type: "path" | "tag";
+    target: string;
+    revalidated: boolean;
+    error?: string;
+  }> = [];
+
+  // Revalidate the specific path
+  try {
+    revalidatePath(path, "page");
+    results.push({ type: "path", target: path, revalidated: true });
+  } catch (error) {
+    results.push({
+      type: "path",
+      target: path,
+      revalidated: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+
+  // Optionally revalidate tags for broader invalidation
+  if (tags) {
+    for (const tag of tags) {
+      try {
+        // Next.js 16: use { expire: 0 } for immediate expiration (webhook use case)
+        revalidateTag(tag, { expire: 0 });
+        results.push({ type: "tag", target: tag, revalidated: true });
+      } catch (error) {
+        results.push({
+          type: "tag",
+          target: tag,
+          revalidated: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
     }
-  });
+  }
 
   const allSuccess = results.every((r) => r.revalidated);
 
