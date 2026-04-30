@@ -1,4 +1,4 @@
-// import type { Core } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default {
   /**
@@ -7,7 +7,54 @@ export default {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register({ strapi }: { strapi: Core.Strapi }) {
+    // Document Service middleware: fires on property publish/unpublish/delete
+    // to trigger Next.js cache revalidation via webhook.
+    strapi.documents.use(async (context, next) => {
+      const result = await next();
+
+      const relevantTypes = ['api::property.property'];
+      if (!relevantTypes.includes(context.uid)) return result;
+
+      if (['publish', 'unpublish', 'delete'].includes(context.action)) {
+        setImmediate(async () => {
+          try {
+            const url = process.env.NEXTJS_REVALIDATE_URL;
+            const secret = process.env.REVALIDATION_SECRET;
+
+            if (!url || !secret) {
+              strapi.log.warn(
+                'Revalidation webhook skipped: NEXTJS_REVALIDATE_URL and REVALIDATION_SECRET must be set.'
+              );
+              return;
+            }
+
+            // Extract slug from the result to build the concrete path
+            const slug = result?.slug;
+            const path = slug ? `/properties/${slug}` : '/properties';
+
+            await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${secret}`,
+              },
+              body: JSON.stringify({
+                path,
+                tags: ['properties', 'global'],
+              }),
+            });
+
+            strapi.log.info(`Revalidation webhook fired for ${path}`);
+          } catch (error) {
+            strapi.log.error('Revalidation webhook failed:', error);
+          }
+        });
+      }
+
+      return result;
+    });
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
