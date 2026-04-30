@@ -171,4 +171,78 @@ describe("Property Detail Page (Server Component)", () => {
     const types = screen.getAllByText(/ranch/i);
     expect(types.length).toBeGreaterThanOrEqual(1);
   });
+
+  it("renders the description when provided", async () => {
+    vi.mocked(fetchProperty).mockResolvedValue(
+      createProperty({
+        description: [
+          { type: "paragraph", children: [{ type: "text", text: "A beautiful ranch estate with mountain views." }] },
+        ],
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    expect(
+      screen.getByText("A beautiful ranch estate with mountain views."),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the gallery grid with images", async () => {
+    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    expect(
+      screen.getByRole("heading", { name: /gallery/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders map image when mapImage is provided", async () => {
+    vi.mocked(fetchProperty).mockResolvedValue(
+      createProperty({
+        mapImage: createMedia({
+          id: 10,
+          documentId: "media-010",
+          url: "/uploads/map.jpg",
+          alternativeText: "Property map",
+          name: "map.jpg",
+        }),
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    expect(
+      screen.getByRole("heading", { name: /location/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("does not render map section when mapImage is null", async () => {
+    vi.mocked(fetchProperty).mockResolvedValue(
+      createProperty({ mapImage: null }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    expect(
+      screen.queryByRole("heading", { name: /location/i }),
+    ).not.toBeInTheDocument();
+  });
 });

@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { fetchProperty } from "@/lib/fetch-property";
 import { getEnv } from "@/lib/env";
+import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
+import { ImageGalleryGrid } from "@/components/ImageGalleryGrid";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
@@ -44,7 +46,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
 
   const strapiUrl = getEnv().STRAPI_URL;
-  const { title, location, acreage, propertyType, heroImage, heroVideo } = property;
+  const { title, location, acreage, propertyType, description, heroImage, heroVideo, gallery, mapImage } = property;
 
   return (
     <>
@@ -95,26 +97,72 @@ export default async function PropertyDetailPage({ params }: Props) {
       {/* Property Details */}
       <section aria-label="Property details" className="py-16 md:py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
-            {title}
-          </h2>
-          {location && (
-            <p className="mt-4 text-secondary/70 text-lg font-sans">
-              {location}
-            </p>
-          )}
-          {acreage && (
-            <p className="mt-2 text-secondary/70 text-base font-sans">
-              {acreage} acres
-            </p>
-          )}
-          {propertyType && (
-            <p className="mt-2 text-secondary/70 text-base font-sans">
-              {propertyType}
-            </p>
-          )}
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex-1">
+              <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
+                {title}
+              </h2>
+              {location && (
+                <p className="mt-4 text-secondary/70 text-lg font-sans">
+                  {location}
+                </p>
+              )}
+
+              {/* Property stats */}
+              <div className="mt-6 flex flex-wrap gap-6">
+                {acreage && (
+                  <div className="flex flex-col">
+                    <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
+                      Acreage
+                    </span>
+                    <span className="font-display text-primary text-2xl mt-1">
+                      {acreage}
+                    </span>
+                  </div>
+                )}
+                {propertyType && (
+                  <div className="flex flex-col">
+                    <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
+                      Type
+                    </span>
+                    <span className="font-display text-primary text-2xl mt-1 capitalize">
+                      {propertyType}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              <div className="mt-8">
+                <StrapiBlocksRenderer blocks={description} />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Gallery Grid */}
+      <ImageGalleryGrid images={gallery ?? []} strapiUrl={strapiUrl} />
+
+      {/* Map Image */}
+      {mapImage && (
+        <section aria-label="Property map" className="py-16 md:py-24">
+          <div className="mx-auto max-w-7xl px-6">
+            <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
+              Location
+            </h2>
+            <div className="mt-12 relative aspect-[16/9] overflow-hidden rounded-2xl">
+              <Image
+                src={`${strapiUrl}${mapImage.url}`}
+                alt={mapImage.alternativeText ?? `Map of ${title}`}
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Contact CTA */}
       <section
