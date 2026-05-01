@@ -69,47 +69,86 @@ export default async function PropertyDetailPage({ params }: Props) {
         )}
       </HeroSection>
 
-      {/* Property Details */}
-      <section aria-label="Property details" className="py-16 md:py-24">
+      {/* Property Description — Monolith layout (ported from Emri Village reference) */}
+      <section
+        aria-label="Property details"
+        className="py-16 md:py-24 border-t border-white/5"
+      >
         <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex-1">
-              <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
-                {title}
-              </h2>
-              {location && (
-                <p className="mt-4 text-secondary/70 text-lg font-sans">
-                  {location}
-                </p>
-              )}
-
-              {/* Property stats */}
-              <div className="mt-6 flex flex-wrap gap-6">
-                {acreage && (
-                  <div className="flex flex-col">
-                    <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
-                      Acreage
-                    </span>
-                    <span className="font-display text-primary text-2xl mt-1">
-                      {acreage}
-                    </span>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+            {/* Left: Description */}
+            <div className="lg:col-span-7">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary/50 mb-6 block font-medium">
+                Property_Overview
+              </span>
+              <div className="space-y-10">
+                <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight uppercase tracking-tighter">
+                  {title}
+                </h2>
+                {location && (
+                  <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-secondary/30 italic">
+                    {location}
+                  </p>
                 )}
-                {propertyType && (
-                  <div className="flex flex-col">
-                    <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
-                      Type
-                    </span>
-                    <span className="font-display text-primary text-2xl mt-1 capitalize">
-                      {propertyType}
-                    </span>
-                  </div>
-                )}
+                <div className="text-secondary/70 text-lg leading-relaxed">
+                  <StrapiBlocksRenderer blocks={description} />
+                </div>
               </div>
+            </div>
 
-              {/* Description */}
-              <div className="mt-8">
-                <StrapiBlocksRenderer blocks={description} />
+            {/* Right: Technical Highlights */}
+            <div className="lg:col-span-5">
+              <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
+                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-medium italic">
+                  Technical_Highlights
+                </span>
+                <ul className="space-y-8">
+                  {acreage && (
+                    <li className="flex items-start gap-6">
+                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                        01
+                      </span>
+                      <div>
+                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                          Land_Footprint
+                        </p>
+                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                          {acreage} acres of prime terrain
+                        </p>
+                      </div>
+                    </li>
+                  )}
+                  {propertyType && (
+                    <li className="flex items-start gap-6">
+                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                        02
+                      </span>
+                      <div>
+                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                          Classification
+                        </p>
+                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose capitalize">
+                          {propertyType.replace("_", " ")} designation
+                        </p>
+                      </div>
+                    </li>
+                  )}
+                  {location && (
+                    <li className="flex items-start gap-6">
+                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                        {acreage && propertyType ? "03" : acreage || propertyType ? "02" : "01"}
+                      </span>
+                      <div>
+                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                          Geographic_Context
+                        </p>
+                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                          {location}
+                        </p>
+                      </div>
+                    </li>
+                  )}
+                </ul>
               </div>
             </div>
           </div>
