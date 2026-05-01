@@ -43,7 +43,7 @@ export default async function AboutPage() {
   const hasContent = about.title !== null || about.blocks.length > 0;
 
   return (
-    <main className="py-16 md:py-24">
+    <main className="pt-24 pb-16 md:pt-28 md:pb-24">
       <div className="mx-auto max-w-7xl px-6">
         {about.title && (
           <h1 className="font-display text-primary text-4xl md:text-5xl lg:text-6xl leading-tight mb-8 md:mb-12">
