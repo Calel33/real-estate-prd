@@ -622,6 +622,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     gallery: Schema.Attribute.Media<'images', true>;
     heroImage: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     heroVideo: Schema.Attribute.Media<'videos'>;
+    highlights: Schema.Attribute.JSON;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -632,6 +633,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetMinMaxLength<{
         maxLength: 500;
       }>;
+    locationAccess: Schema.Attribute.JSON;
     mapImage: Schema.Attribute.Media<'images'>;
     propertyType: Schema.Attribute.Enumeration<
       ['residential', 'commercial', 'land', 'ranch', 'estate', 'other']

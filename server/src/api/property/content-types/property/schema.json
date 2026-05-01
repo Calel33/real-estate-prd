@@ -67,6 +67,12 @@
       "required": false,
       "allowedTypes": ["images"]
     },
+    "highlights": {
+      "type": "json"
+    },
+    "locationAccess": {
+      "type": "json"
+    },
     "status": {
       "type": "enumeration",
       "enum": ["draft", "published"],
