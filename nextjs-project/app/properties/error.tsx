@@ -17,7 +17,7 @@ export default function PropertiesError({
       <h2 className="font-display text-4xl text-primary">
         Unable to load properties
       </h2>
-      <p className="max-w-md text-secondary/70">{error.message}</p>
+      <p className="max-w-md text-secondary/70">Something went wrong while loading properties.</p>
       <button
         type="button"
         onClick={() => reset()}
