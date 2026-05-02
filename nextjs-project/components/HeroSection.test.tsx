@@ -163,4 +163,103 @@ describe("HeroSection", () => {
     const overlay = container.querySelector('[class*="gradient-to-t"]');
     expect(overlay).toBeInTheDocument();
   });
+
+  it("applies stronger gradient overlay when video is present", () => {
+    const property = createProperty({
+      heroVideo: createMedia({
+        id: 2,
+        documentId: "media-002",
+        url: "/uploads/hero.mp4",
+        name: "hero.mp4",
+        mime: "video/mp4",
+      }),
+    });
+    const { container } = render(
+      <HeroSection property={property} strapiUrl={TEST_STRAPI_URL} />,
+    );
+
+    const overlay = container.querySelector('[class*="gradient-to-t"]');
+    const className = overlay?.getAttribute("class") || "";
+    // Video should use stronger gradient (from-background/70) for readability
+    expect(className).toContain("from-background/70");
+    // Should NOT use the image-only gradient
+    expect(className).not.toMatch(/from-background(?![/\d])/);
+  });
+
+  it("does NOT hide content with sr-only when video is present", () => {
+    const property = createProperty({
+      heroVideo: createMedia({
+        id: 2,
+        documentId: "media-002",
+        url: "/uploads/hero.mp4",
+        name: "hero.mp4",
+        mime: "video/mp4",
+      }),
+    });
+    const { container } = render(
+      <HeroSection property={property} strapiUrl={TEST_STRAPI_URL} />,
+    );
+
+    // Content overlay should NOT have sr-only class
+    const contentOverlay = container.querySelector('[class*="flex-col"]');
+    const className = contentOverlay?.getAttribute("class") || "";
+    expect(className).not.toContain("sr-only");
+
+    // Title should still be visible (not hidden)
+    expect(
+      screen.getByRole("heading", { name: /sunset valley ranch/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("applies text-shadow for legibility when video is present", () => {
+    const property = createProperty({
+      heroVideo: createMedia({
+        id: 2,
+        documentId: "media-002",
+        url: "/uploads/hero.mp4",
+        name: "hero.mp4",
+        mime: "video/mp4",
+      }),
+    });
+    const { container } = render(
+      <HeroSection property={property} strapiUrl={TEST_STRAPI_URL} />,
+    );
+
+    const contentOverlay = container.querySelector('[class*="flex-col"]');
+    const className = contentOverlay?.getAttribute("class") || "";
+    expect(className).toContain("text-shadow");
+  });
+
+  it("does NOT apply text-shadow when video is absent", () => {
+    const property = createProperty();
+    const { container } = render(
+      <HeroSection property={property} strapiUrl={TEST_STRAPI_URL} />,
+    );
+
+    const contentOverlay = container.querySelector('[class*="flex-col"]');
+    const className = contentOverlay?.getAttribute("class") || "";
+    expect(className).not.toContain("text-shadow");
+  });
+
+  it("renders custom children visibly when video is present", () => {
+    const property = createProperty({
+      heroVideo: createMedia({
+        id: 2,
+        documentId: "media-002",
+        url: "/uploads/hero.mp4",
+        name: "hero.mp4",
+        mime: "video/mp4",
+      }),
+    });
+    render(
+      <HeroSection property={property} strapiUrl={TEST_STRAPI_URL}>
+        <div data-testid="custom-content">Custom Overlay</div>
+      </HeroSection>,
+    );
+
+    // Custom children should be rendered and visible
+    const customContent = screen.getByTestId("custom-content");
+    expect(customContent).toBeInTheDocument();
+    expect(customContent).toHaveTextContent("Custom Overlay");
+  });
 });
