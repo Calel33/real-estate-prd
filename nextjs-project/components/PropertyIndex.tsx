@@ -122,12 +122,12 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
             {/* Asset Identity */}
             <div className="col-span-5">
-              <h2 className="text-2xl md:text-5xl font-display font-black uppercase tracking-tighter text-primary group-hover:text-primary transition-colors">
+              <h2 className="text-2xl md:text-5xl font-display font-black uppercase tracking-tighter text-primary transition-colors">
                 {property.title}
               </h2>
               <p className="font-sans text-[9px] text-secondary/40 uppercase tracking-widest mt-1">
                 {formatPropertyType(property.propertyType)}
-                {property.acreage ? ` / ${property.acreage} acres` : ""}
+                {property.acreage ? ` / ${property.acreage} ${property.acreage === 1 ? "acre" : "acres"}` : ""}
               </p>
             </div>
 
