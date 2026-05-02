@@ -116,16 +116,7 @@ export function ImageGalleryGrid({
                 key={image.documentId}
                 type="button"
                 onClick={() => onImageClick?.(index)}
-                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
-                style={{ filter: "grayscale(100%) contrast(1.1)" }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.filter =
-                    "grayscale(0%)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.filter =
-                    "grayscale(100%) contrast(1.1)";
-                }}
+                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer grayscale contrast-[1.1] hover:grayscale-0 hover:contrast-100 transition-[filter] duration-500`}
                 aria-label={`View ${image.alternativeText ?? image.name}`}
               >
                 <Image
@@ -133,7 +124,7 @@ export function ImageGalleryGrid({
                   alt={image.alternativeText ?? image.name}
                   fill
                   priority={index === 0}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes={index === 0 ? "(max-width: 768px) 100vw, (max-width: 1024px) 67vw, 67vw" : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"}
                   className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
                 />
 

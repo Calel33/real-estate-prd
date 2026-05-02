@@ -56,9 +56,8 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
         }
       />
 
-      {/* Content overlay — hidden when video is playing so the video is unobstructed */}
-      {!heroVideo && (
-        <div className="relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24">
+      {/* Content overlay — always in DOM for accessibility; visually hidden during video playback */}
+        <div className={`relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24 ${heroVideo ? "sr-only" : ""}`}>
           {children ? (
             children
           ) : (
@@ -83,7 +82,6 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
             </>
           )}
         </div>
-      )}
     </section>
   );
 }

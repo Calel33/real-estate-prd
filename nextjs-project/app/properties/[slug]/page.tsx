@@ -156,7 +156,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       </section>
 
       {/* Property Highlights & Location Access Cards */}
-      {(highlights && highlights.length > 0 || locationAccess && locationAccess.length > 0) && (
+      {((highlights && highlights.length > 0) || (locationAccess && locationAccess.length > 0)) && (
         <section
           aria-label="Property highlights and location access"
           className="py-16 md:py-24"
@@ -171,7 +171,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   </span>
                   <ul className="space-y-8">
                     {highlights.map((item, index) => (
-                      <li key={item.label} className="flex items-start gap-6">
+                      <li key={`${item.label}-${index}`} className="flex items-start gap-6">
                         <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
                           {String(index + 1).padStart(2, "0")}
                         </span>
@@ -197,7 +197,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   </span>
                   <ul className="space-y-8">
                     {locationAccess.map((item, index) => (
-                      <li key={item.label} className="flex items-start gap-6">
+                      <li key={`${item.label}-${index}`} className="flex items-start gap-6">
                         <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
                           {String(index + 1).padStart(2, "0")}
                         </span>
