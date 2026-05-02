@@ -111,11 +111,13 @@ export function ImageGalleryGrid({
             const { col, lgCol, height } = getMosaicSpan(index);
             const tag = getImageTag(index, image);
 
-            return (
+            const isInteractive = onImageClick !== undefined;
+
+            return isInteractive ? (
               <button
                 key={image.documentId}
                 type="button"
-                onClick={() => onImageClick?.(index)}
+                onClick={() => onImageClick(index)}
                 className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer grayscale contrast-[1.1] hover:grayscale-0 hover:contrast-100 transition-[filter] duration-500`}
                 aria-label={`View ${image.alternativeText ?? image.name}`}
               >
@@ -124,7 +126,7 @@ export function ImageGalleryGrid({
                   alt={image.alternativeText ?? image.name}
                   fill
                   priority={index === 0}
-                  sizes={index === 0 ? "(max-width: 768px) 100vw, (max-width: 1024px) 67vw, 67vw" : "(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"}
+                  sizes={index === 0 ? "(max-width: 1024px) 100vw, 67vw" : "(max-width: 1024px) 100vw, 33vw"}
                   className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
                 />
 
@@ -133,6 +135,25 @@ export function ImageGalleryGrid({
                   {tag}
                 </span>
               </button>
+            ) : (
+              <div
+                key={image.documentId}
+                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface grayscale contrast-[1.1] hover:grayscale-0 hover:contrast-100 transition-[filter] duration-500`}
+              >
+                <Image
+                  src={`${strapiUrl}${image.url}`}
+                  alt={image.alternativeText ?? image.name}
+                  fill
+                  priority={index === 0}
+                  sizes={index === 0 ? "(max-width: 1024px) 100vw, 67vw" : "(max-width: 1024px) 100vw, 33vw"}
+                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
+                />
+
+                {/* Technical scan tag — appears on hover */}
+                <span className="pointer-events-none absolute top-5 left-5 bg-black/70 text-primary/80 font-sans text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  {tag}
+                </span>
+              </div>
             );
           })}
         </div>
