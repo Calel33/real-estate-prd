@@ -183,10 +183,10 @@ describe("strapiFetch", () => {
 });
 
 // ---------------------------------------------------------------------------
-// fetchProperties
+// intake.properties
 // ---------------------------------------------------------------------------
 
-describe("fetchProperties", () => {
+describe("intake.properties", () => {
   it("returns an array of properties on success", async () => {
     vi.stubGlobal(
       "fetch",
@@ -236,10 +236,10 @@ describe("fetchProperties", () => {
 });
 
 // ---------------------------------------------------------------------------
-// fetchProperty
+// intake.property
 // ---------------------------------------------------------------------------
 
-describe("fetchProperty", () => {
+describe("intake.property", () => {
   it("returns a property when found by slug", async () => {
     vi.stubGlobal(
       "fetch",
@@ -304,10 +304,10 @@ describe("fetchProperty", () => {
 });
 
 // ---------------------------------------------------------------------------
-// fetchAbout
+// intake.about
 // ---------------------------------------------------------------------------
 
-describe("fetchAbout", () => {
+describe("intake.about", () => {
   it("returns about data on success", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -357,13 +357,33 @@ describe("fetchAbout", () => {
 
     await expect(intake.about()).rejects.toThrow(StrapiValidationError);
   });
+
+  it("returns EMPTY_ABOUT on 404", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: () => Promise.resolve({}),
+      }),
+    );
+
+    const about = await intake.about();
+    expect(about).toEqual({
+      id: 0,
+      documentId: "about-placeholder",
+      title: null,
+      blocks: [],
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
-// fetchGlobal
+// intake.global
 // ---------------------------------------------------------------------------
 
-describe("fetchGlobal", () => {
+describe("intake.global", () => {
   it("returns global data on success", async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -433,5 +453,58 @@ describe("fetchGlobal", () => {
 
     const global = await intake.global();
     expect(global.siteName).toBe("Real Estate");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// intake.submission
+// ---------------------------------------------------------------------------
+
+describe("intake.submission", () => {
+  const validSubmissionInput = {
+    name: "John Doe",
+    email: "john@example.com",
+    message: "I am interested.",
+  };
+
+  const validSubmissionResponse = {
+    data: {
+      id: 1,
+      documentId: "sub-001",
+      name: "John Doe",
+      email: "john@example.com",
+      message: "I am interested.",
+      submittedAt: "2026-04-01T00:00:00.000Z",
+      createdAt: "2026-04-01T00:00:00.000Z",
+      updatedAt: "2026-04-01T00:00:00.000Z",
+    },
+    meta: {},
+  };
+
+  it("returns id/documentId on success", async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: () => Promise.resolve(validSubmissionResponse),
+    });
+    vi.stubGlobal("fetch", mockFetch);
+
+    const result = await intake.submission(validSubmissionInput);
+    expect(result).toEqual({ id: 1, documentId: "sub-001" });
+    expect(mockFetch).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer test-token",
+        }),
+      }),
+    );
+  });
+
+  it("validates input", async () => {
+    await expect(
+      intake.submission({ name: "", email: "not-an-email", message: "" }),
+    ).rejects.toThrow(z.ZodError);
   });
 });
