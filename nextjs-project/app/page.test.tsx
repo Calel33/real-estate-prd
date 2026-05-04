@@ -11,15 +11,15 @@ vi.mock("@/components/MonolithHero", () => ({
   ),
 }));
 
-vi.mock("@/lib/fetch-global", () => ({
-  fetchGlobal: vi.fn(),
+vi.mock("@/lib/intake", () => ({
+  intake: { global: vi.fn() },
 }));
 
 vi.mock("@/lib/env", () => ({
   getEnv: () => ({ STRAPI_URL: "http://localhost:1337" }),
 }));
 
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 
 const HomePage = async () => {
   const { default: Page } = await import("./page");
@@ -53,7 +53,7 @@ afterEach(() => {
 
 describe("HomePage (brand splash)", () => {
   it("renders MonolithHero", async () => {
-    vi.mocked(fetchGlobal).mockResolvedValue(createGlobal());
+    vi.mocked(intake.global).mockResolvedValue(createGlobal());
 
     const Page = await HomePage();
     const result = await Page();

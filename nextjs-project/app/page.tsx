@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { MonolithHero } from "@/components/MonolithHero";
 
@@ -7,7 +7,7 @@ import { MonolithHero } from "@/components/MonolithHero";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await fetchGlobal();
+  const globalData = await intake.global();
 
   return {
     title: globalData.siteName,

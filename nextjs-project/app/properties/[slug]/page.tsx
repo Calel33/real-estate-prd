@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchProperty } from "@/lib/fetch-property";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
@@ -19,8 +18,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const [property, globalData] = await Promise.all([
-    fetchProperty(slug),
-    fetchGlobal(),
+    intake.property(slug),
+    intake.global(),
   ]);
 
   if (!property) {
@@ -46,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PropertyDetailPage({ params }: Props) {
   const { slug } = await params;
-  const property = await fetchProperty(slug);
+  const property = await intake.property(slug);
 
   if (!property) {
     notFound();

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { fetchAbout } from "@/lib/fetch-about";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { DynamicZoneRenderer } from "@/components/DynamicZoneRenderer";
 
@@ -8,7 +7,7 @@ import { DynamicZoneRenderer } from "@/components/DynamicZoneRenderer";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await fetchGlobal();
+  const globalData = await intake.global();
 
   return {
     title:
@@ -37,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * a placeholder message is shown instead of an error page.
  */
 export default async function AboutPage() {
-  const about = await fetchAbout();
+  const about = await intake.about();
   const { STRAPI_URL: strapiUrl } = getEnv();
 
   const hasContent = about.title !== null || about.blocks.length > 0;
