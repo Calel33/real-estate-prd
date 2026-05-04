@@ -1,9 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { strapiFetch, StrapiError, StrapiValidationError } from "@/lib/fetch";
-import { fetchProperty, fetchProperties } from "@/lib/fetch-property";
-import { createSubmission } from "@/lib/fetch-submission";
-import { fetchAbout } from "@/lib/fetch-about";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { resetEnv } from "@/lib/env";
 import { z } from "zod";
 import { PropertySchema } from "@/lib/schemas/property";
@@ -202,7 +199,7 @@ describe("fetchProperties", () => {
       }),
     );
 
-    const properties = await fetchProperties();
+    const properties = await intake.properties();
     expect(properties).toHaveLength(1);
     expect(properties[0].title).toBe("Mountain Ranch Estate");
     expect(properties[0].slug).toBe("mountain-ranch-estate");
@@ -219,7 +216,7 @@ describe("fetchProperties", () => {
       }),
     );
 
-    const properties = await fetchProperties();
+    const properties = await intake.properties();
     expect(properties).toHaveLength(0);
   });
 
@@ -234,7 +231,7 @@ describe("fetchProperties", () => {
       }),
     );
 
-    await expect(fetchProperties()).rejects.toThrow(StrapiError);
+    await expect(intake.properties()).rejects.toThrow(StrapiError);
   });
 });
 
@@ -255,7 +252,7 @@ describe("fetchProperty", () => {
       }),
     );
 
-    const property = await fetchProperty("mountain-ranch-estate");
+    const property = await intake.property("mountain-ranch-estate");
     expect(property).not.toBeNull();
     expect(property?.slug).toBe("mountain-ranch-estate");
   });
@@ -271,7 +268,7 @@ describe("fetchProperty", () => {
       }),
     );
 
-    const property = await fetchProperty("nonexistent");
+    const property = await intake.property("nonexistent");
     expect(property).toBeNull();
   });
 
@@ -284,7 +281,7 @@ describe("fetchProperty", () => {
     });
     vi.stubGlobal("fetch", mockFetch);
 
-    await fetchProperty("ranch with spaces");
+    await intake.property("ranch with spaces");
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining("ranch%20with%20spaces"),
       expect.anything(),
@@ -302,7 +299,7 @@ describe("fetchProperty", () => {
       }),
     );
 
-    await expect(fetchProperty("any")).rejects.toThrow(StrapiError);
+    await expect(intake.property("any")).rejects.toThrow(StrapiError);
   });
 });
 
@@ -320,7 +317,7 @@ describe("fetchAbout", () => {
     });
     vi.stubGlobal("fetch", mockFetch);
 
-    const about = await fetchAbout();
+    const about = await intake.about();
     expect(about.siteName).toBeUndefined(); // About doesn't have siteName
     expect(about.title).toBe("About Us");
     expect(mockFetch).toHaveBeenCalledWith(
@@ -344,7 +341,7 @@ describe("fetchAbout", () => {
       }),
     );
 
-    await expect(fetchAbout()).rejects.toThrow(StrapiError);
+    await expect(intake.about()).rejects.toThrow(StrapiError);
   });
 
   it("throws on validation failure (missing data)", async () => {
@@ -358,7 +355,7 @@ describe("fetchAbout", () => {
       }),
     );
 
-    await expect(fetchAbout()).rejects.toThrow(StrapiValidationError);
+    await expect(intake.about()).rejects.toThrow(StrapiValidationError);
   });
 });
 
@@ -376,7 +373,7 @@ describe("fetchGlobal", () => {
     });
     vi.stubGlobal("fetch", mockFetch);
 
-    const global = await fetchGlobal();
+    const global = await intake.global();
     expect(global.siteName).toBe("Real Estate");
     expect(global.siteDescription).toBe("Premier properties");
     expect(global.socialLinks).toEqual([]);
@@ -401,7 +398,7 @@ describe("fetchGlobal", () => {
       }),
     );
 
-    await expect(fetchGlobal()).rejects.toThrow(StrapiError);
+    await expect(intake.global()).rejects.toThrow(StrapiError);
   });
 
   it("throws on validation failure", async () => {
@@ -415,7 +412,7 @@ describe("fetchGlobal", () => {
       }),
     );
 
-    await expect(fetchGlobal()).rejects.toThrow(StrapiValidationError);
+    await expect(intake.global()).rejects.toThrow(StrapiValidationError);
   });
 
   it("handles global with missing optional fields", async () => {
@@ -434,7 +431,7 @@ describe("fetchGlobal", () => {
       }),
     );
 
-    const global = await fetchGlobal();
+    const global = await intake.global();
     expect(global.siteName).toBe("Real Estate");
   });
 });
