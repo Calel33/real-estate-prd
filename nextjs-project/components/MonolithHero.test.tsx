@@ -16,37 +16,37 @@ vi.mock("next/link", () => ({
 
 describe("MonolithHero", () => {
   it("renders tagline", () => {
-    render(<MonolithHero tagline="Zenith Real Estate" />);
+    render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
-    expect(screen.getByText("Zenith Real Estate")).toBeInTheDocument();
+    expect(screen.getByText("Real Assets. Digital Future.")).toBeInTheDocument();
   });
 
   it("shows brand headline", () => {
-    render(<MonolithHero tagline="Zenith" />);
+    render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
     const heading = screen.getByRole("heading", { level: 1 });
-    expect(heading).toHaveTextContent(/Zenith/);
-    expect(heading).toHaveTextContent(/Estates/);
+    expect(heading).toHaveTextContent(/DISRUPT/);
+    expect(heading).toHaveTextContent(/THE BLOCK/);
   });
 
-  it('shows "Access Portfolio" CTA', () => {
-    render(<MonolithHero tagline="Zenith" />);
+  it('shows "Explore the Portfolio" CTA', () => {
+    render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
-    const cta = screen.getByRole("link", { name: /access portfolio/i });
+    const cta = screen.getByRole("link", { name: /explore the portfolio/i });
     expect(cta).toBeInTheDocument();
     expect(cta).toHaveAttribute("href", "/properties");
   });
 
   it("renders side brand mark on large screens", () => {
-    render(<MonolithHero tagline="Zenith" />);
+    render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
-    expect(screen.getByText("Z")).toBeInTheDocument();
-    expect(screen.getByText("Curated Estates")).toBeInTheDocument();
+    expect(screen.getByText("D")).toBeInTheDocument();
+    expect(screen.getByText("Digital Estates")).toBeInTheDocument();
   });
 
   it("renders description text", () => {
-    render(<MonolithHero tagline="Zenith" />);
+    render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
-    expect(screen.getByText(/Exceptional properties curated/i)).toBeInTheDocument();
+    expect(screen.getByText(/Real estate built for the century ahead/i)).toBeInTheDocument();
   });
 });

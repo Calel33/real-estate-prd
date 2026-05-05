@@ -58,7 +58,7 @@ export default async function PropertyDetailPage({ params }: Props) {
     <>
       {/* Hero Section */}
       <HeroSection property={property} strapiUrl={strapiUrl}>
-        <h1 className="font-display text-5xl md:text-8xl text-primary leading-tight mt-2">
+        <h1 className="font-display font-black text-5xl md:text-8xl text-primary leading-tight mt-2">
           {title}
         </h1>
         {location && (
@@ -81,7 +81,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 Property_Overview
               </span>
               <div className="space-y-10">
-                <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight uppercase tracking-tighter">
+                <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight uppercase tracking-tighter">
                   {title}
                 </h2>
                 {location && (
@@ -97,7 +97,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
             {/* Right: Technical Highlights */}
             <div className="lg:col-span-5">
-              <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
+              <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
                 <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                   Technical_Highlights
                 </span>
@@ -164,7 +164,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
               {/* Property Highlights Card */}
               {highlights && highlights.length > 0 && (
-                <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
+                <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
                   <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                     Property_Highlights
                   </span>
@@ -190,7 +190,7 @@ export default async function PropertyDetailPage({ params }: Props) {
 
               {/* Location & Access Card */}
               {locationAccess && locationAccess.length > 0 && (
-                <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
+                <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
                   <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                     Location_&_Access
                   </span>
@@ -225,7 +225,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       {mapImage && (
         <section aria-label="Property map" className="py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-6">
-            <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
+            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
               Location
             </h2>
             <div className="mt-12 relative aspect-[16/9] overflow-hidden rounded-2xl">
@@ -248,7 +248,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       >
         <div className="mx-4 rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
           <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-16 md:py-20 flex flex-col items-center text-center gap-6">
-            <h2 className="font-display text-primary text-3xl md:text-5xl leading-tight">
+            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
               Interested in this property?
             </h2>
             <p className="text-secondary/70 text-lg md:text-xl max-w-lg font-sans">

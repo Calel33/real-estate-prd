@@ -17,9 +17,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Zenith — Real Estate Portfolio",
+  title: "Disrupt the Block — Premium Real Estate for a Digital Future",
   description:
-    "Premium real estate portfolio showcasing exceptional properties.",
+    "Disrupt the Block pairs exceptional properties with blockchain infrastructure. Explore our portfolio of premium real estate, built for the next era of ownership.",
 };
 
 export default function RootLayout({

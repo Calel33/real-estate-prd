@@ -140,7 +140,7 @@ describe("About Page (Server Component) — Monolith Design", () => {
     expect(screen.getByTestId("dynamic-zone")).toBeInTheDocument();
   });
 
-  it("renders with null title — falls back to 'About Zenith'", async () => {
+  it("renders with null title — falls back to 'About Disrupt the Block'", async () => {
     vi.mocked(intake.about).mockResolvedValue(createAbout({ title: null }));
 
     const { default: AboutPage } = await import("./page");
@@ -149,7 +149,7 @@ describe("About Page (Server Component) — Monolith Design", () => {
 
     // Should render fallback heading and still render blocks
     expect(
-      screen.getByRole("heading", { name: /about zenith/i }),
+      screen.getByRole("heading", { name: /about disrupt the block/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/We connect people with extraordinary properties/),
@@ -170,7 +170,7 @@ describe("About Page (Server Component) — Monolith Design", () => {
 
     // Should show placeholder manifesto text
     expect(
-      screen.getByText(/Zenith Estates operates as a singular point/i),
+      screen.getByText(/Disrupt the Block operates as a singular point/i),
     ).toBeInTheDocument();
   });
 

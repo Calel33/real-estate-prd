@@ -45,7 +45,7 @@ export default async function AboutPage() {
   const about = await intake.about();
   const { STRAPI_URL: strapiUrl } = getEnv();
 
-  const heading = about.title ?? "About Zenith";
+  const heading = about.title ?? "About Disrupt the Block";
   const hasBodyContent = about.blocks.length > 0;
 
   return (
@@ -78,7 +78,7 @@ export default async function AboutPage() {
       </div>
       <div className="absolute top-[88px] right-6 z-20 pointer-events-none text-right bg-background px-3 py-1">
         <span className="text-[9px] uppercase tracking-[0.3em] text-primary/40 font-sans font-black">
-          Global Portfolio
+          DTB Belize
         </span>
       </div>
 
@@ -88,7 +88,7 @@ export default async function AboutPage() {
         style={{ opacity: 0.015 }}
       >
         <span className="font-display text-[25vw] tracking-tighter text-primary">
-          ZENITH
+          DTB
         </span>
       </div>
 
@@ -99,11 +99,11 @@ export default async function AboutPage() {
           {/* ── Left: Label + Heading ── */}
           <div className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.1s]">
             <span className="text-[10px] uppercase tracking-[0.5em] text-primary/60 font-sans mb-6 block font-black">
-              The_Zenith_Portfolio
+              DTB_About
             </span>
             <h1
               aria-label={heading}
-              className="font-display text-[clamp(2.5rem,8vw,7rem)] leading-[0.85] tracking-[-0.03em] uppercase text-primary"
+              className="font-display font-black text-[clamp(2.5rem,8vw,7rem)] leading-[0.85] tracking-[-0.03em] uppercase text-primary"
             >
               {heading.split(" ").map((word, i, arr) => (
                 <span key={i}>
@@ -126,52 +126,62 @@ export default async function AboutPage() {
               ) : (
                 <>
                   <p className="mb-4">
-                    Zenith Estates operates as a singular point of excellence
-                    for high-value property curation. We do not follow market
-                    trends; we define them.
+                    Land is the oldest asset class on earth. It shouldn&apos;t
+                    be the slowest. We&apos;re a real estate company that
+                    believes exceptional properties deserve exceptional
+                    infrastructure. Physical and digital. Side by side.
                   </p>
                   <p>
-                    Our methodology is rooted in absolute discretion and
-                    aggressive due diligence. By deploying capital with
-                    surgical precision, we secure generational assets across
-                    the world&apos;s most sought-after locations.
+                    Every asset we touch gets two things: the rigor of
+                    old-world real estate and the architecture of what&apos;s
+                    next. One without the other is half the picture. Together,
+                    it&apos;s how an industry built on paper and patience
+                    finally learns to move.
                   </p>
                 </>
               )}
             </div>
 
             {/* ── Stat grid ── */}
-            <div className="pt-10 border-t border-white/[0.08]">
-              <div className="grid grid-cols-2 gap-8">
+            {/* Glass gradient shell */}
+            <div className="rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
+              {/* Glass content surface */}
+              <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-8">
+                <div className="grid grid-cols-2 gap-8">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.25em] text-primary/50 font-sans mb-2 font-black">
-                    Portfolio
+                    Access
                   </p>
                   <p className="text-xs font-black uppercase tracking-widest text-secondary/80 font-sans">
-                    Curated Estates
+                    Physical + Digital
                   </p>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.25em] text-primary/50 font-sans mb-2 font-black">
-                    Approach
+                    Future State
                   </p>
                   <p className="text-xs font-black uppercase tracking-widest text-secondary/80 font-sans">
-                    White-Glove Service
+                    Held Today. Liquid Tomorrow.
                   </p>
                 </div>
+              </div>
               </div>
             </div>
 
             {/* ── CTA ── */}
             <Link
               href="/properties"
-              className="inline-block font-sans text-[10px] tracking-[0.5em] uppercase px-8 py-4 transition-all duration-700 hover:bg-primary/10"
+              className="group relative inline-flex items-center gap-3 px-10 py-4 overflow-hidden rounded-glass backdrop-blur-[2px] border text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-700 hover:pl-14 hover:text-background"
               style={{
-                border: "1px solid rgba(242, 234, 211, 0.2)",
+                backgroundColor: "rgba(242, 234, 211, 0.1)",
+                borderColor: "rgba(242, 234, 211, 0.2)",
                 color: "var(--color-primary)",
               }}
             >
-              Explore Portfolio &rarr;
+              <span className="relative z-10">Explore Portfolio</span>
+              <span className="relative z-10 text-base transition-transform duration-700 group-hover:translate-x-1">
+                →
+              </span>
             </Link>
           </div>
         </div>

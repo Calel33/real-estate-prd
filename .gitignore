@@ -24,5 +24,18 @@ next-env.d.ts
 
 # Research / scratch
 RESEARCH-*.md
+PRD.md
+SESSION-HANDOFF-*.md
+issue-comment-body.md
+pr-body.md
+
+# Agent / AI tooling
+.agents/
+.archon/
+.opencode/
+
+# Task / planning notes
+tasks/
+nextjs-project/tasks/
 
 

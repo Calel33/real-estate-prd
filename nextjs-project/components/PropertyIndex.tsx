@@ -208,7 +208,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
             </div>
           </div>
           <div className="hidden md:block text-[10px] font-sans text-secondary/20 uppercase tracking-[0.4em]">
-            Zenith Holdings / Private Index
+            DTB Holdings / Private Index
           </div>
         </section>
       )}

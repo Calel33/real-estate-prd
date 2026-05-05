@@ -18,7 +18,7 @@ export async function sendContactEmail(
   const env = getEnv();
 
   const { data: result, error } = await resend.emails.send({
-    from: `Zenith Real Estate <${env.RESEND_FROM_EMAIL}>`,
+    from: `Disrupt the Block <${env.RESEND_FROM_EMAIL}>`,
     to: env.ADMIN_NOTIFICATION_EMAIL ?? env.RESEND_FROM_EMAIL,
     subject: `New Contact Form Submission from ${data.name}`,
     html: `<!DOCTYPE html>
@@ -42,7 +42,7 @@ export async function sendContactEmail(
   </table>
   <hr style="border: none; border-top: 1px solid #333; margin: 24px 0;">
   <p style="color: #666; font-size: 12px;">
-    This message was submitted via the Zenith Real Estate contact form.
+    This message was submitted via the Disrupt the Block contact form.
   </p>
 </body>
 </html>`,

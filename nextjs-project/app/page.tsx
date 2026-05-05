@@ -12,7 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: globalData.siteName,
     description:
-      globalData.defaultSeo?.metaDescription ?? globalData.siteDescription,
+      globalData.defaultSeo?.metaDescription ??
+      globalData.siteDescription ??
+      "Disrupt the Block pairs exceptional properties with blockchain infrastructure. Explore our portfolio of premium real estate, built for the next era of ownership.",
     openGraph: globalData.defaultSeo?.shareImage
       ? {
           images: [
@@ -37,8 +39,8 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function Home() {
   return (
-    <div className="fixed inset-0 z-[60] bg-background overflow-hidden">
-      <MonolithHero />
+    <div className="fixed inset-0 z-[60] bg-background overflow-auto">
+      <MonolithHero tagline="Real Assets. Digital Future." />
     </div>
   );
 }
