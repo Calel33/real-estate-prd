@@ -117,7 +117,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
             onMouseLeave={handleRowLeave}
           >
             {/* Ref */}
-            <div className="col-span-1 font-sans text-xs text-primary/50 font-bold">
+            <div className="col-span-1 font-sans text-xs text-primary/50 font-black">
               {formatRef(index)}
             </div>
 
@@ -141,7 +141,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
             {/* Type */}
             <div className="col-span-3 text-right">
-              <p className="text-xl font-bold tracking-tighter text-secondary/80">
+              <p className="text-xl font-black tracking-tighter text-secondary/80">
                 {property.propertyType
                   ? formatPropertyType(property.propertyType)
                   : "—"}
@@ -183,7 +183,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
               <p className="font-sans text-[8px] text-secondary/30 uppercase mb-1 tracking-widest">
                 Holdings
               </p>
-              <p className="font-sans text-xs text-secondary font-bold">
+              <p className="font-sans text-xs text-secondary font-black">
                 {properties.length}{" "}
                 {properties.length === 1 ? "Property" : "Properties"}
               </p>
@@ -192,7 +192,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
               <p className="font-sans text-[8px] text-secondary/30 uppercase mb-1 tracking-widest">
                 Aggregate_Acreage
               </p>
-              <p className="font-sans text-xs text-secondary font-bold">
+              <p className="font-sans text-xs text-secondary font-black">
                 {totalAcreage.toLocaleString()}{" "}
                 {totalAcreage === 1 ? "acre" : "acres"}
               </p>
@@ -201,7 +201,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
               <p className="font-sans text-[8px] text-secondary/30 uppercase mb-1 tracking-widest">
                 Locations
               </p>
-              <p className="font-sans text-xs text-secondary font-bold">
+              <p className="font-sans text-xs text-secondary font-black">
                 {distinctLocations}{" "}
                 {distinctLocations === 1 ? "Location" : "Locations"}
               </p>

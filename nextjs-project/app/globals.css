@@ -32,6 +32,11 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes scanline {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
 /* Dark-mode-only base styles */
 body {
   background-color: var(--color-background);

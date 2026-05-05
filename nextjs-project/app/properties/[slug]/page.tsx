@@ -77,7 +77,7 @@ export default async function PropertyDetailPage({ params }: Props) {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
             {/* Left: Description */}
             <div className="lg:col-span-7">
-              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary/50 mb-6 block font-medium">
+              <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary/50 mb-6 block font-black">
                 Property_Overview
               </span>
               <div className="space-y-10">
@@ -98,7 +98,7 @@ export default async function PropertyDetailPage({ params }: Props) {
             {/* Right: Technical Highlights */}
             <div className="lg:col-span-5">
               <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
-                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-medium italic">
+                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                   Technical_Highlights
                 </span>
                 <ul className="space-y-8">
@@ -108,7 +108,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                         01
                       </span>
                       <div>
-                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                           Land_Footprint
                         </p>
                         <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
@@ -123,7 +123,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                         02
                       </span>
                       <div>
-                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                           Classification
                         </p>
                         <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose capitalize">
@@ -138,7 +138,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                         {acreage != null && propertyType != null ? "03" : acreage != null || propertyType != null ? "02" : "01"}
                       </span>
                       <div>
-                        <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                           Geographic_Context
                         </p>
                         <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
@@ -165,7 +165,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Property Highlights Card */}
               {highlights && highlights.length > 0 && (
                 <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
-                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-medium italic">
+                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                     Property_Highlights
                   </span>
                   <ul className="space-y-8">
@@ -175,7 +175,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <div>
-                          <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                          <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                             {item.label.replace(/ /g, "_")}
                           </p>
                           <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
@@ -191,7 +191,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               {/* Location & Access Card */}
               {locationAccess && locationAccess.length > 0 && (
                 <div className="bg-[#0c0c0c] p-8 md:p-10 border border-white/5">
-                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-medium italic">
+                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
                     Location_&_Access
                   </span>
                   <ul className="space-y-8">
@@ -201,7 +201,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <div>
-                          <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">
+                          <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                             {item.label.replace(/ /g, "_")}
                           </p>
                           <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
