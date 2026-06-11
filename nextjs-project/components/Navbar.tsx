@@ -23,7 +23,7 @@ export function Navbar() {
         {/* Glass content surface */}
         <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] px-6 py-4 flex items-center justify-between">
           {/* Logo */}
-          <span className="font-display text-primary text-lg">
+          <span className="font-display font-black text-primary text-lg">
             DTB
           </span>
 

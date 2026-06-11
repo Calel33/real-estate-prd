@@ -52,7 +52,29 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
 
   const strapiUrl = getEnv().STRAPI_URL;
-  const { title, location, acreage, propertyType, description, gallery, mapImage, highlights, locationAccess } = property;
+  const { title, location, acreage, ft2, propertyType, description, gallery, map, mapImage, propertyId, ownership } = property;
+  const mapCoordinates = map?.geometry?.coordinates;
+  const mapLongitude = mapCoordinates?.[0];
+  const mapLatitude = mapCoordinates?.[1];
+  const hasMapCoordinates =
+    typeof mapLongitude === "number" && typeof mapLatitude === "number";
+  const mapLocation =
+    slug === "emri-village" ? "Emri Village, Belize" : location;
+  const mapQuery = hasMapCoordinates
+    ? `${mapLatitude},${mapLongitude}`
+    : mapLocation;
+  const geographicContext =
+    slug === "emri-village"
+      ? "Utility-ready parcel with direct highway access, just 20 minutes from Belmopan."
+      : location;
+  const geographicContextList =
+    slug === "emri-village"
+      ? ["Utility-ready parcel", "Direct highway access", "Just 20 minutes from Belmopan"]
+      : null;
+  const lotSizeFt2 =
+    slug === "emri-village" && acreage != null
+      ? Math.round(acreage * 43560)
+      : ft2;
 
   return (
     <>
@@ -141,12 +163,83 @@ export default async function PropertyDetailPage({ params }: Props) {
                         <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
                           Geographic_Context
                         </p>
+                        <div className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                          {geographicContextList ? (
+                            <ul className="list-disc pl-4 space-y-1">
+                              {geographicContextList.map((item) => (
+                                <li key={item}>{item}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            geographicContext
+                          )}
+                        </div>
+                      </div>
+                    </li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Details Card */}
+              <div className="mt-8 rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
+                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
+                  Details
+                </span>
+                <ul className="space-y-8">
+                  <li className="flex items-start gap-6">
+                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                      01
+                    </span>
+                    <div>
+                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
+                        Property_Id
+                      </p>
+                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                        {propertyId}
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-6">
+                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                      02
+                    </span>
+                    <div>
+                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
+                        Property_Lot_Size
+                      </p>
+                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                        {lotSizeFt2 != null ? `${lotSizeFt2.toLocaleString()} sq ft` : acreage != null ? `${acreage} acres` : "—"}
+                      </p>
+                    </div>
+                  </li>
+                  {location && (
+                    <li className="flex items-start gap-6">
+                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                        03
+                      </span>
+                      <div>
+                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
+                          Location
+                        </p>
                         <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
                           {location}
                         </p>
                       </div>
                     </li>
                   )}
+                  <li className="flex items-start gap-6">
+                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                      {location ? "04" : "03"}
+                    </span>
+                    <div>
+                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
+                        Ownership
+                      </p>
+                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                        {ownership}
+                      </p>
+                    </div>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -154,92 +247,43 @@ export default async function PropertyDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Property Highlights & Location Access Cards */}
-      {((highlights && highlights.length > 0) || (locationAccess && locationAccess.length > 0)) && (
-        <section
-          aria-label="Property highlights and location access"
-          className="py-16 md:py-24"
-        >
+      {/* Location Map */}
+      {(mapQuery || mapImage) && (
+        <section aria-label="Property map" className="py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-              {/* Property Highlights Card */}
-              {highlights && highlights.length > 0 && (
-                <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
-                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
-                    Property_Highlights
-                  </span>
-                  <ul className="space-y-8">
-                    {highlights.map((item, index) => (
-                      <li key={`${item.label}-${index}`} className="flex items-start gap-6">
-                        <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <div>
-                          <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                            {item.label.replace(/ /g, "_")}
-                          </p>
-                          <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                            {item.value}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Location & Access Card */}
-              {locationAccess && locationAccess.length > 0 && (
-                <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
-                  <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
-                    Location_&_Access
-                  </span>
-                  <ul className="space-y-8">
-                    {locationAccess.map((item, index) => (
-                      <li key={`${item.label}-${index}`} className="flex items-start gap-6">
-                        <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <div>
-                          <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                            {item.label.replace(/ /g, "_")}
-                          </p>
-                          <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                            {item.value}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
+              Location
+            </h2>
+            <div className="mt-12 mx-auto w-full max-w-4xl relative aspect-[3/2] overflow-hidden rounded-2xl border border-white/10 bg-surface/40 shadow-glass">
+              {mapQuery ? (
+                <iframe
+                  title={`Map of ${title}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+                  className="h-full w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : mapImage ? (
+                <Image
+                  src={`${strapiUrl}${mapImage.url}`}
+                  alt={mapImage.alternativeText ?? `Map of ${title}`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 896px"
+                  className="object-cover"
+                />
+              ) : null}
             </div>
+            {map?.place_name && (
+              <p className="mt-6 text-center font-sans text-xs uppercase tracking-[0.15em] text-secondary/40">
+                {map.place_name}
+              </p>
+            )}
           </div>
         </section>
       )}
 
       {/* Gallery Grid with Lightbox */}
       <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />
-
-      {/* Map Image */}
-      {mapImage && (
-        <section aria-label="Property map" className="py-16 md:py-24">
-          <div className="mx-auto max-w-7xl px-6">
-            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
-              Location
-            </h2>
-            <div className="mt-12 relative aspect-[16/9] overflow-hidden rounded-2xl">
-              <Image
-                src={`${strapiUrl}${mapImage.url}`}
-                alt={mapImage.alternativeText ?? `Map of ${title}`}
-                fill
-                sizes="(max-width: 1280px) 100vw, 1280px"
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Contact CTA */}
       <section

@@ -4,7 +4,7 @@
  */
 export function Footer() {
   // Placeholder: will be replaced with CMS data in Slice 2
-  const footerText = "Disrupt the Block";
+  const footerText = "Disrupt The Block Real-Estate";
   const currentYear = new Date().getFullYear();
 
   return (

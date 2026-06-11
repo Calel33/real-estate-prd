@@ -1,10 +1,22 @@
 import { z } from "zod";
 import { StrapiMediaSchema, StrapiBlocksSchema } from "./strapi";
 
-const HighlightItemSchema = z.object({
-  label: z.string(),
-  value: z.string(),
-});
+const nullableNumberFromStrapi = z.preprocess(
+  (value) => (value === "" || value == null ? null : value),
+  z.coerce.number().nullable(),
+);
+
+export const PropertyMapSchema = z
+  .object({
+    place_name: z.string().optional(),
+    geometry: z
+      .object({
+        type: z.string().optional(),
+        coordinates: z.tuple([z.number(), z.number()]),
+      })
+      .optional(),
+  })
+  .passthrough();
 
 export const PropertySchema = z.object({
   id: z.number(),
@@ -13,6 +25,7 @@ export const PropertySchema = z.object({
   slug: z.string(),
   location: z.string().nullable(),
   acreage: z.number().nullable(),
+  ft2: nullableNumberFromStrapi,
   propertyType: z
     .enum(["residential", "commercial", "land", "ranch", "estate", "other"])
     .nullable(),
@@ -20,9 +33,10 @@ export const PropertySchema = z.object({
   heroImage: StrapiMediaSchema.nullable(),
   heroVideo: StrapiMediaSchema.nullable(),
   gallery: z.array(StrapiMediaSchema).nullable(),
+  map: PropertyMapSchema.nullable(),
   mapImage: StrapiMediaSchema.nullable(),
-  highlights: z.array(HighlightItemSchema).nullish(),
-  locationAccess: z.array(HighlightItemSchema).nullish(),
+  propertyId: z.string().nullable(),
+  ownership: z.string().nullable(),
   status: z.enum(["draft", "published"]),
   publishedAt: z.string().nullable(),
   createdAt: z.string(),

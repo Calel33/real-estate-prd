@@ -154,7 +154,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
         <div
           ref={overlayRef}
           aria-hidden="true"
-          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-20 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] grayscale contrast-125 hidden md:block"
+          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-20 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hidden md:block"
           style={{
             opacity: isRevealVisible ? 0.6 : 0,
             transform: `translate(-50%, -50%) scale(${isRevealVisible ? 1 : 0.8})`,

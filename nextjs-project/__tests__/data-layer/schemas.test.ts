@@ -132,12 +132,19 @@ describe("PropertySchema", () => {
     slug: "mountain-ranch-estate",
     location: "Bozeman, MT",
     acreage: 250.5,
+    ft2: "10911780",
     propertyType: "ranch",
     description: validBlocks,
     heroImage: validMedia,
     heroVideo: null,
     gallery: [validMedia],
+    map: {
+      place_name: "Cayo District, Belize",
+      geometry: { type: "Point", coordinates: [-88.9, 17.2] },
+    },
     mapImage: validMedia,
+    propertyId: "PROP-001",
+    ownership: "Fractional / Tokenized",
     status: "published",
     publishedAt: "2026-04-01T00:00:00.000Z",
     createdAt: "2026-04-01T00:00:00.000Z",
@@ -145,7 +152,8 @@ describe("PropertySchema", () => {
   };
 
   it("accepts valid property data", () => {
-    expect(() => PropertySchema.parse(validProperty)).not.toThrow();
+    const result = PropertySchema.parse(validProperty);
+    expect(result.ft2).toBe(10911780);
   });
 
   it("rejects property with missing required title", () => {
@@ -170,14 +178,17 @@ describe("PropertySchema", () => {
       ...validProperty,
       location: null,
       acreage: null,
+      ft2: null,
       propertyType: null,
       description: null,
       heroImage: null,
       gallery: null,
+      map: null,
       mapImage: null,
     });
     expect(result.location).toBeNull();
     expect(result.acreage).toBeNull();
+    expect(result.ft2).toBeNull();
     expect(result.propertyType).toBeNull();
   });
 

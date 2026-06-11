@@ -53,10 +53,10 @@ function getImageTag(index: number, image: StrapiMedia): string {
 }
 
 /**
- * Mosaic image gallery grid with grayscale hover effects and technical tags.
+ * Mosaic image gallery grid with hover effects and technical tags.
  * Ported from the Emri Village monolith reference design:
  *   - 12-column mosaic grid with varying image sizes
- *   - Grayscale filter with smooth color reveal on hover
+ *   - Hover-driven scale effects on images
  *   - Technical scan-code tags that fade in on hover
  *   - Click-to-enlarge with lightbox integration
  */
@@ -118,7 +118,7 @@ export function ImageGalleryGrid({
                 key={image.documentId}
                 type="button"
                 onClick={() => onImageClick(index)}
-                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer grayscale contrast-[1.1] hover:grayscale-0 hover:contrast-100 transition-[filter] duration-500`}
+                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer transition-[filter] duration-500`}
                 aria-label={`View ${image.alternativeText ?? image.name}`}
               >
                 <Image
@@ -138,7 +138,7 @@ export function ImageGalleryGrid({
             ) : (
               <div
                 key={image.documentId}
-                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface grayscale contrast-[1.1] hover:grayscale-0 hover:contrast-100 transition-[filter] duration-500`}
+                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface transition-[filter] duration-500`}
               >
                 <Image
                   src={`${strapiUrl}${image.url}`}

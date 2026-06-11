@@ -127,9 +127,8 @@ export default async function AboutPage() {
                 <>
                   <p className="mb-4">
                     Land is the oldest asset class on earth. It shouldn&apos;t
-                    be the slowest. We&apos;re a real estate company that
-                    believes exceptional properties deserve exceptional
-                    infrastructure. Physical and digital. Side by side.
+                    be the slowest. We believe physical properties should have
+                    digital infrastructure. Physical and digital. Side by side.
                   </p>
                   <p>
                     Every asset we touch gets two things: the rigor of

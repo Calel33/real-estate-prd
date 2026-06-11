@@ -7,7 +7,17 @@ const config: Core.Config.Middlewares = [
   'global::handle-socket-errors',
   'strapi::logger',
   'strapi::errors',
-  'strapi::security',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        directives: {
+          'worker-src': ['blob:'],
+          'script-src': ["'self'", 'api.mapbox.com'],
+        },
+      },
+    },
+  },
   'strapi::cors',
   'strapi::poweredBy',
   'strapi::query',
