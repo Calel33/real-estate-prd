@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme inline {
+@theme {
   /* Colors — Zenith dark-mode-only palette */
   --color-primary: #F2EAD3;
   --color-secondary: #FFFFFF;
