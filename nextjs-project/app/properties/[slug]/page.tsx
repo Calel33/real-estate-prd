@@ -103,7 +103,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   Technical_Highlights
                 </span>
                 <ul className="space-y-8">
-                  {acreage && (
+                  {acreage != null && (
                     <li className="flex items-start gap-6">
                       <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
                         01
@@ -136,7 +136,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   {location && (
                     <li className="flex items-start gap-6">
                       <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                        {acreage && propertyType ? "03" : acreage || propertyType ? "02" : "01"}
+                        {acreage != null && propertyType != null ? "03" : acreage != null || propertyType != null ? "02" : "01"}
                       </span>
                       <div>
                         <p className="font-sans text-xs font-bold uppercase tracking-widest text-secondary/90 mb-1">

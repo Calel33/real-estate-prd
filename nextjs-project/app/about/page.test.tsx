@@ -147,9 +147,9 @@ describe("About Page (Server Component)", () => {
     const { container } = render(result);
 
     // The inner content container should have max-width constraint
-    const main = container.querySelector("main");
-    expect(main).toBeInTheDocument();
-    const innerDiv = main?.querySelector("div");
+    const section = container.querySelector("section");
+    expect(section).toBeInTheDocument();
+    const innerDiv = section?.querySelector("div");
     expect(innerDiv).toBeInTheDocument();
     const className = innerDiv?.getAttribute("class") ?? "";
     expect(className).toContain("max-w-7xl");
@@ -162,8 +162,8 @@ describe("About Page (Server Component)", () => {
     const result = await AboutPage();
     const { container } = render(result);
 
-    // Should have a main landmark
-    const main = container.querySelector("main");
-    expect(main).toBeInTheDocument();
+    // Should have an about section landmark
+    const section = container.querySelector("section[aria-label='About us']");
+    expect(section).toBeInTheDocument();
   });
 });

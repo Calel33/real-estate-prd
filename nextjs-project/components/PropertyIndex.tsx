@@ -78,7 +78,8 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
       </header>
 
       {/* Properties List */}
-      <main
+      <section
+        aria-label="Properties list"
         className="px-6 lg:px-20 pb-40 relative"
         onMouseMove={handleMouseMove}
       >
@@ -122,12 +123,12 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
             {/* Asset Identity */}
             <div className="col-span-5">
-              <h2 className="text-2xl md:text-5xl font-display font-black uppercase tracking-tighter text-primary group-hover:text-primary transition-colors">
+              <h2 className="text-2xl md:text-5xl font-display font-black uppercase tracking-tighter text-primary transition-colors">
                 {property.title}
               </h2>
               <p className="font-sans text-[9px] text-secondary/40 uppercase tracking-widest mt-1">
                 {formatPropertyType(property.propertyType)}
-                {property.acreage ? ` / ${property.acreage} acres` : ""}
+                {property.acreage ? ` / ${property.acreage} ${property.acreage === 1 ? "acre" : "acres"}` : ""}
               </p>
             </div>
 
@@ -169,12 +170,12 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
             />
           )}
         </div>
-      </main>
+      </section>
 
       {/* Footer Stats */}
       {hasProperties && (
-        <footer
-          role="contentinfo"
+        <section
+          aria-label="Portfolio stats"
           className="fixed bottom-0 w-full bg-background border-t border-white/10 px-6 py-6 flex justify-between items-center z-[110]"
         >
           <div className="flex gap-10 md:gap-16">
@@ -209,7 +210,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
           <div className="hidden md:block text-[10px] font-sans text-secondary/20 uppercase tracking-[0.4em]">
             Zenith Holdings / Private Index
           </div>
-        </footer>
+        </section>
       )}
     </>
   );
