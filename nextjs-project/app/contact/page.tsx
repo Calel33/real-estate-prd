@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { ContactForm } from "@/components/ContactForm";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await fetchGlobal();
+  const globalData = await intake.global();
 
   return {
     title:

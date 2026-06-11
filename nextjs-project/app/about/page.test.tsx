@@ -4,8 +4,16 @@ import type { About } from "@/lib/schemas/about";
 import type { StrapiMedia } from "@/lib/schemas/strapi";
 
 // Mock the fetch function used by the Server Component
-vi.mock("@/lib/fetch-about", () => ({
-  fetchAbout: vi.fn(),
+vi.mock("@/lib/intake", () => ({
+  intake: {
+    about: vi.fn(),
+    global: vi.fn().mockResolvedValue({
+      siteName: "Test",
+      siteDescription: "Test",
+      defaultSeo: null,
+      socialLinks: [],
+    }),
+  },
 }));
 
 vi.mock("@/lib/env", () => ({
@@ -32,7 +40,7 @@ vi.mock("next/image", () => ({
 }));
 
 // Import after mocking
-import { fetchAbout } from "@/lib/fetch-about";
+import { intake } from "@/lib/intake";
 
 // ---------------------------------------------------------------------------
 // Test Helpers
@@ -89,7 +97,7 @@ afterEach(() => {
 
 describe("About Page (Server Component)", () => {
   it("renders the about page title", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout());
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
@@ -101,7 +109,7 @@ describe("About Page (Server Component)", () => {
   });
 
   it("renders dynamic zone blocks via DynamicZoneRenderer", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout());
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
@@ -114,7 +122,7 @@ describe("About Page (Server Component)", () => {
   });
 
   it("renders with null title gracefully", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout({ title: null }));
+    vi.mocked(intake.about).mockResolvedValue(createAbout({ title: null }));
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
@@ -127,7 +135,7 @@ describe("About Page (Server Component)", () => {
   });
 
   it("renders with empty blocks array", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout({ blocks: [] }));
+    vi.mocked(intake.about).mockResolvedValue(createAbout({ blocks: [] }));
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
@@ -140,7 +148,7 @@ describe("About Page (Server Component)", () => {
   });
 
   it("applies responsive layout classes", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout());
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
@@ -156,7 +164,7 @@ describe("About Page (Server Component)", () => {
   });
 
   it("uses correct page container structure", async () => {
-    vi.mocked(fetchAbout).mockResolvedValue(createAbout());
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();

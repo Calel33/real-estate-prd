@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { fetchProperties } from "@/lib/fetch-property";
-import { fetchGlobal } from "@/lib/fetch-global";
+import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { PropertyIndex } from "@/components/PropertyIndex";
 
@@ -8,7 +7,7 @@ import { PropertyIndex } from "@/components/PropertyIndex";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await fetchGlobal();
+  const globalData = await intake.global();
 
   return {
     title: `Properties — ${globalData.siteName}`,
@@ -36,10 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
  *   - Hover image reveal that follows the cursor
  *   - Footer with aggregate portfolio stats
  *
- * Data source: Strapi CMS via fetchProperties()
+ * Data source: Strapi CMS via intake.properties()
  */
 export default async function PropertiesPage() {
-  const properties = await fetchProperties();
+  const properties = await intake.properties();
   const strapiUrl = getEnv().STRAPI_URL;
 
   return <PropertyIndex properties={properties} strapiUrl={strapiUrl} />;

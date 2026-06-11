@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { ContactFormInputSchema } from "@/lib/schemas/contact-form";
-import { createSubmission } from "@/lib/fetch-submission";
+import { intake } from "@/lib/intake";
 import { sendContactEmail } from "@/lib/resend";
 import { StrapiError } from "@/lib/fetch";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     // 3. POST to Strapi
-    await createSubmission(data);
+    await intake.submission(data);
   } catch (error) {
     if (error instanceof StrapiError) {
       return NextResponse.json(

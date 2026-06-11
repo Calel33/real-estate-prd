@@ -33,8 +33,8 @@ vi.mock("@/lib/env", () => ({
   }),
 }));
 
-vi.mock("@/lib/fetch-submission", () => ({
-  createSubmission: mockCreateSubmission,
+vi.mock("@/lib/intake", () => ({
+  intake: { submission: mockCreateSubmission },
 }));
 
 vi.mock("@/lib/resend", () => ({
@@ -154,8 +154,8 @@ describe("POST /api/contact", () => {
     );
   });
 
-  // Test 5: Non-StrapiError from createSubmission
-  it("returns 500 when createSubmission throws a non-Strapi error", async () => {
+  // Test 5: Non-StrapiError from intake.submission
+  it("returns 500 when intake.submission throws a non-Strapi error", async () => {
     mockCreateSubmission.mockRejectedValue(
       new Error("Database connection lost"),
     );

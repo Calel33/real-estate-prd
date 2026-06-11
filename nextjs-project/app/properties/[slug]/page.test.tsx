@@ -4,8 +4,16 @@ import type { Property } from "@/lib/schemas/property";
 import type { StrapiMedia } from "@/lib/schemas/strapi";
 
 // Mock the fetch function used by the Server Component
-vi.mock("@/lib/fetch-property", () => ({
-  fetchProperty: vi.fn(),
+vi.mock("@/lib/intake", () => ({
+  intake: {
+    property: vi.fn(),
+    global: vi.fn().mockResolvedValue({
+      siteName: "Test",
+      siteDescription: "Test",
+      defaultSeo: null,
+      socialLinks: [],
+    }),
+  },
 }));
 
 vi.mock("@/lib/env", () => ({
@@ -54,7 +62,7 @@ vi.mock("next/link", () => ({
 }));
 
 // Import after mocking
-import { fetchProperty } from "@/lib/fetch-property";
+import { intake } from "@/lib/intake";
 
 function createMedia(overrides: Partial<StrapiMedia> = {}): StrapiMedia {
   return {
@@ -107,7 +115,7 @@ afterEach(() => {
 
 describe("Property Detail Page (Server Component)", () => {
   it("renders the property title", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -122,7 +130,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the property location", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -135,7 +143,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the property acreage", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -147,7 +155,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the contact CTA link", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -160,7 +168,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the property type", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -173,7 +181,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the description when provided", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(
+    vi.mocked(intake.property).mockResolvedValue(
       createProperty({
         description: [
           { type: "paragraph", children: [{ type: "text", text: "A beautiful ranch estate with mountain views." }] },
@@ -193,7 +201,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders the gallery grid with images", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(createProperty());
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
 
     const { default: PropertyPage } = await import("./page");
     const result = await PropertyPage({
@@ -207,7 +215,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("renders map image when mapImage is provided", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(
+    vi.mocked(intake.property).mockResolvedValue(
       createProperty({
         mapImage: createMedia({
           id: 10,
@@ -231,7 +239,7 @@ describe("Property Detail Page (Server Component)", () => {
   });
 
   it("does not render map section when mapImage is null", async () => {
-    vi.mocked(fetchProperty).mockResolvedValue(
+    vi.mocked(intake.property).mockResolvedValue(
       createProperty({ mapImage: null }),
     );
 
