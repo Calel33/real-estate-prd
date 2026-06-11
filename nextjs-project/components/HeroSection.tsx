@@ -47,17 +47,17 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
         />
       ) : null}
 
-      {/* Gradient overlay — subtle for video, stronger for image legibility */}
+      {/* Gradient overlay — strong for video readability, subtle for image legibility */}
       <div
         className={
           heroVideo
-            ? "absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"
+            ? "absolute inset-0 bg-gradient-to-t from-background/70 via-background/30 to-transparent"
             : "absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent"
         }
       />
 
-      {/* Content overlay — always in DOM for accessibility; visually hidden during video playback */}
-        <div className={`relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24 ${heroVideo ? "sr-only" : ""}`}>
+      {/* Content overlay — always visible; text-shadow ensures legibility over video */}
+      <div className={`relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24 ${heroVideo ? "[text-shadow:0_2px_8px_rgba(0,0,0,0.8)]" : ""}`}>
           {children ? (
             children
           ) : (
