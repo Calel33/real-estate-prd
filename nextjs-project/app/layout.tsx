@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { Navbar } from "@/components/Navbar";
+import { ConditionalNavbar } from "@/components/ConditionalNavbar";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
@@ -33,8 +33,8 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} antialiased`}
     >
       <body className="bg-background text-secondary font-sans min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1 pt-24">{children}</main>
+        <ConditionalNavbar />
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

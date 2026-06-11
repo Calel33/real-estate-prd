@@ -2,38 +2,33 @@
 
 import { useState } from "react";
 
-export function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const links = [
+  { label: "Properties", href: "/properties" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+] as const;
 
-  const links = [
-    { label: "Home", href: "/" },
-    { label: "Properties", href: "/properties" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-  ];
+export function HomeNav() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className="fixed top-0 left-0 right-0 z-50"
+      className="absolute top-0 left-0 right-0 z-50"
     >
-      {/* Glass gradient shell */}
       <div className="mx-4 mt-4 rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
-        {/* Glass content surface */}
-        <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] px-6 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <span className="font-display text-primary text-lg">
+        <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-4 flex items-center justify-between">
+          <span className="font-display text-primary text-lg tracking-wide">
             Zenith
           </span>
 
-          {/* Desktop nav links */}
           <ul className="hidden md:flex gap-8" role="list">
             {links.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="text-secondary/70 hover:text-primary transition-colors text-sm"
+                  className="nav-link text-secondary/70 hover:text-primary transition-colors text-xs uppercase tracking-[0.3em]"
                 >
                   {link.label}
                 </a>
@@ -41,7 +36,6 @@ export function Navbar() {
             ))}
           </ul>
 
-          {/* Mobile hamburger */}
           <button
             className="md:hidden text-secondary/70 hover:text-primary transition-colors"
             aria-label="Toggle navigation menu"
@@ -76,15 +70,14 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden mx-4 mt-1 rounded-glass bg-surface/90 backdrop-blur-[4px] px-6 py-4">
+        <div className="md:hidden mx-4 mt-1 rounded-glass bg-surface/90 backdrop-blur-[4px] shadow-glass px-6 py-4">
           <ul className="flex flex-col gap-4" role="list">
             {links.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="text-secondary/70 hover:text-primary transition-colors text-sm block py-1"
+                  className="text-secondary/70 hover:text-primary transition-colors text-xs uppercase tracking-[0.3em] block py-1"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}

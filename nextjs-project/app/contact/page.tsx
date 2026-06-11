@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-lg px-4 py-8 sm:py-10 md:py-14 lg:py-16">
+    <div className="mx-auto max-w-lg px-4 pt-24 pb-8 sm:pt-24 sm:pb-10 md:pt-28 md:pb-14 lg:pt-32 lg:pb-16">
       {/* Heading */}
       <div className="mb-8 text-center">
         <h1 className="font-display text-[--color-primary] text-3xl sm:text-4xl md:text-5xl leading-tight">

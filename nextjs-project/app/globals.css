@@ -26,6 +26,12 @@
     0 0 10px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
+/* Animations — inherited from The Monolith reference */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* Dark-mode-only base styles */
 body {
   background-color: var(--color-background);
