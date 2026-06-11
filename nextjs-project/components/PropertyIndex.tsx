@@ -41,7 +41,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
   const handleRowEnter = (heroImageUrl: string | null) => {
     if (heroImageUrl) {
-      setActiveImageSrc(`${strapiUrl}${heroImageUrl}`);
+      setActiveImageSrc(heroImageUrl.startsWith('http') ? heroImageUrl : `${strapiUrl}${heroImageUrl}`);
       setIsRevealVisible(true);
     }
   };
