@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { ConditionalNavbar } from "@/components/ConditionalNavbar";
-import { Footer } from "@/components/Footer";
+import { ConditionalNavbar, ConditionalFooter } from "@/components/ConditionalNavbar";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -35,7 +34,7 @@ export default function RootLayout({
       <body className="bg-background text-secondary font-sans min-h-screen flex flex-col">
         <ConditionalNavbar />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );
