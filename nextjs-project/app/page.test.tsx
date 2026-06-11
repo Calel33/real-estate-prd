@@ -4,9 +4,9 @@ import type { Global } from "@/lib/schemas/global";
 
 // Mock the child components
 vi.mock("@/components/MonolithHero", () => ({
-  MonolithHero: ({ tagline }: { tagline: string }) => (
+  MonolithHero: ({ tagline }: { tagline?: string }) => (
     <div data-testid="monolith-hero">
-      <span data-testid="hero-tagline">{tagline}</span>
+      {tagline && <span data-testid="hero-tagline">{tagline}</span>}
     </div>
   ),
 }));

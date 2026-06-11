@@ -36,8 +36,6 @@ export async function generateMetadata(): Promise<Metadata> {
  * Pure brand presentation. No property data.
  */
 export default async function Home() {
-  const globalData = await fetchGlobal();
-
   return (
     <div className="fixed inset-0 z-[60] bg-background overflow-hidden">
       <MonolithHero />

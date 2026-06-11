@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Property } from "@/lib/schemas/property";
@@ -29,11 +29,14 @@ function formatPropertyType(type: string | null): string {
 
 export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
   const [activeImageSrc, setActiveImageSrc] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [isRevealVisible, setIsRevealVisible] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
+    if (overlayRef.current) {
+      overlayRef.current.style.left = `${e.clientX}px`;
+      overlayRef.current.style.top = `${e.clientY}px`;
+    }
   };
 
   const handleRowEnter = (heroImageUrl: string | null) => {
@@ -148,11 +151,10 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
         {/* Hover Image Reveal */}
         <div
+          ref={overlayRef}
           aria-hidden="true"
-          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-[5] overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] grayscale contrast-125 hidden md:block"
+          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-20 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] grayscale contrast-125 hidden md:block"
           style={{
-            left: `${mousePos.x}px`,
-            top: `${mousePos.y}px`,
             opacity: isRevealVisible ? 0.6 : 0,
             transform: `translate(-50%, -50%) scale(${isRevealVisible ? 1 : 0.8})`,
           }}
@@ -164,7 +166,6 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
               fill
               sizes="400px"
               className="object-cover"
-              unoptimized
             />
           )}
         </div>

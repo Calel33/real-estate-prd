@@ -49,20 +49,18 @@ export function MonolithHero({ tagline, property, strapiUrl }: MonolithHeroProps
       {/* Centered hero content */}
       <div className="relative z-10 text-center flex flex-col items-center px-6">
         {tagline && (
-          <div className="animate-[slideUp_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.2s]">
+          <div className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.2s]">
             <span className="text-[10px] uppercase tracking-[0.5em] text-primary/70 mb-6 block">
               {tagline}
             </span>
           </div>
         )}
 
-        <h1 className="animate-[slideUp_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.4s] font-display text-[clamp(3.5rem,12vw,12rem)] leading-[0.85] tracking-[-0.03em] text-primary uppercase">
-          <>
+        <h1 className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.4s] font-display text-[clamp(3.5rem,12vw,12rem)] leading-[0.85] tracking-[-0.03em] text-primary uppercase">
             Zenith<br />Estates
-          </>
         </h1>
 
-        <div className="mt-10 animate-[slideUp_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.6s] flex flex-col items-center gap-8">
+        <div className="mt-10 animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.6s] flex flex-col items-center gap-8">
           <p className="max-w-md text-xs tracking-[0.25em] leading-loose uppercase text-secondary/40">
             Exceptional properties curated for the discerning investor. Discover our portfolio of premium real estate.
           </p>

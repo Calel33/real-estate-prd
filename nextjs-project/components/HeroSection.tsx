@@ -47,35 +47,41 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
         />
       ) : null}
 
-      {/* Gradient overlay for content readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+      {/* Gradient overlay — subtle for video, stronger for image legibility */}
+      <div
+        className={
+          heroVideo
+            ? "absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"
+            : "absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent"
+        }
+      />
 
-      {/* Content overlay */}
-      <div className="relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24">
-        {children ? (
-          children
-        ) : (
-          <>
-            <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
-              Featured Property
-            </span>
-            <h1 className="font-display text-5xl md:text-8xl text-primary leading-tight mt-2">
-              {title}
-            </h1>
-            {location && (
-              <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
-                {location}
-              </p>
-            )}
-            <Link
-              href={`/properties/${slug}`}
-              className="mt-8 inline-flex items-center rounded-full bg-primary text-background font-sans text-sm md:text-base font-medium px-8 py-3 hover:bg-primary/90 transition-colors w-fit"
-            >
-              View Details
-            </Link>
-          </>
-        )}
-      </div>
+      {/* Content overlay — always in DOM for accessibility; visually hidden during video playback */}
+        <div className={`relative z-10 flex h-full flex-col justify-end pb-24 pl-8 md:pl-24 ${heroVideo ? "sr-only" : ""}`}>
+          {children ? (
+            children
+          ) : (
+            <>
+              <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
+                Featured Property
+              </span>
+              <h1 className="font-display text-5xl md:text-8xl text-primary leading-tight mt-2">
+                {title}
+              </h1>
+              {location && (
+                <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
+                  {location}
+                </p>
+              )}
+              <Link
+                href={`/properties/${slug}`}
+                className="mt-8 inline-flex items-center rounded-full bg-primary text-background font-sans text-sm md:text-base font-medium px-8 py-3 hover:bg-primary/90 transition-colors w-fit"
+              >
+                View Details
+              </Link>
+            </>
+          )}
+        </div>
     </section>
   );
 }
