@@ -97,7 +97,7 @@ export default async function AboutPage() {
         {/* Hero grid */}
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-start">
           {/* ── Left: Label + Heading ── */}
-          <div className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.1s]">
+          <div className="animate-slide-up animation-delay-100 opacity-0">
             <span className="text-[10px] uppercase tracking-[0.5em] text-primary/60 font-sans mb-6 block font-black">
               DTB_About
             </span>
@@ -115,7 +115,7 @@ export default async function AboutPage() {
           </div>
 
           {/* ── Right: Body + Stats + CTA ── */}
-          <div className="space-y-10 animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.3s]">
+          <div className="space-y-10 animate-slide-up animation-delay-300 opacity-0">
             {/* Manifesto body / content blocks */}
             <div className="font-sans text-xs leading-[2] uppercase tracking-[0.1em] text-secondary/50 max-w-lg">
               {hasBodyContent ? (

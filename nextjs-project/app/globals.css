@@ -37,6 +37,30 @@
   100% { top: 100%; }
 }
 
+.animate-slide-up {
+  animation: slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
 /* Dark-mode-only base styles */
 body {
   background-color: var(--color-background);
