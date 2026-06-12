@@ -127,7 +127,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                   {(() => {
                     const highlights: Array<{
                       label: string;
-                      content: React.ReactNode;
+                      content: import("react").ReactNode;
                       contentClassName?: string;
                     }> = [];
 
