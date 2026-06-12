@@ -31,14 +31,14 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
           loop
           playsInline
           preload="metadata"
-          poster={heroImage ? `${strapiUrl}${heroImage.url}` : undefined}
+          poster={heroImage ? (heroImage.url.startsWith("http") ? heroImage.url : `${strapiUrl}${heroImage.url}`) : undefined}
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src={`${strapiUrl}${heroVideo.url}`} type={heroVideo.mime} />
+          <source src={heroVideo.url.startsWith("http") ? heroVideo.url : `${strapiUrl}${heroVideo.url}`} type={heroVideo.mime} />
         </video>
       ) : heroImage ? (
         <Image
-          src={`${strapiUrl}${heroImage.url}`}
+          src={heroImage.url.startsWith("http") ? heroImage.url : `${strapiUrl}${heroImage.url}`}
           alt={heroImage.alternativeText ?? title}
           fill
           priority
@@ -52,7 +52,7 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
         className={
           heroVideo
             ? "absolute inset-0 bg-gradient-to-t from-background/70 via-background/30 to-transparent"
-            : "absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent"
+            : "absolute inset-0 bg-gradient-to-t from-background/20 via-background/10 to-transparent"
         }
       />
 

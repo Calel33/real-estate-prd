@@ -18,7 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
       ? {
           images: [
             {
-              url: `${getEnv().STRAPI_URL}${globalData.defaultSeo.shareImage.url}`,
+              url: globalData.defaultSeo.shareImage.url.startsWith("http")
+                ? globalData.defaultSeo.shareImage.url
+                : `${getEnv().STRAPI_URL}${globalData.defaultSeo.shareImage.url}`,
             },
           ],
         }

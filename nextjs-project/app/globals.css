@@ -43,3 +43,10 @@ body {
   color: var(--color-secondary);
   font-family: var(--font-sans);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes slide-up {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

@@ -13,7 +13,7 @@ export default function PropertyDetailError({
   reset: () => void;
 }) {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 text-center">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 text-center pt-24">
       <h2 className="font-display text-4xl text-primary">
         Something went wrong
       </h2>

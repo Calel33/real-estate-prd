@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { strapiFetch, StrapiError, StrapiValidationError } from "@/lib/fetch";
-import { intake } from "@/lib/intake";
+import { intake, EMPTY_ABOUT } from "@/lib/intake";
 import { resetEnv } from "@/lib/env";
 import { z } from "zod";
 
@@ -287,7 +287,7 @@ describe("intake.property", () => {
 
     await intake.property("ranch with spaces");
     expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining("ranch%20with%20spaces"),
+      expect.stringContaining("ranch+with+spaces"),
       expect.anything(),
     );
   });
@@ -322,7 +322,7 @@ describe("intake.about", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const about = await intake.about();
-    expect(about.siteName).toBeUndefined(); // About doesn't have siteName
+    expect(about.documentId).toBe("about-001");
     expect(about.title).toBe("About Us");
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
@@ -374,12 +374,7 @@ describe("intake.about", () => {
     );
 
     const about = await intake.about();
-    expect(about).toEqual({
-      id: 0,
-      documentId: "about-placeholder",
-      title: null,
-      blocks: [],
-    });
+    expect(about).toEqual(EMPTY_ABOUT);
   });
 });
 

@@ -11,7 +11,7 @@
  * @see https://github.com/koajs/koa/issues/1514
  * @see https://nodejs.org/api/errors.html#common-system-errors
  */
-import type { Core } from '@strapi/strapi';
+import type { Core } from '@strapi/types';
 
 const SUPPRESSED_CODES = new Set(['ECONNABORTED', 'ECONNRESET', 'EPIPE', 'ECANCELED']);
 

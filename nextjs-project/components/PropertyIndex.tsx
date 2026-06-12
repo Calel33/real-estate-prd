@@ -33,7 +33,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
   const [isRevealVisible, setIsRevealVisible] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (overlayRef.current) {
+    if (isRevealVisible && overlayRef.current) {
       overlayRef.current.style.left = `${e.clientX}px`;
       overlayRef.current.style.top = `${e.clientY}px`;
     }
@@ -41,7 +41,11 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
 
   const handleRowEnter = (heroImageUrl: string | null) => {
     if (heroImageUrl) {
-      setActiveImageSrc(heroImageUrl.startsWith('http') ? heroImageUrl : `${strapiUrl}${heroImageUrl}`);
+      setActiveImageSrc(
+        heroImageUrl.startsWith("http")
+          ? heroImageUrl
+          : `${strapiUrl.replace(/\/+$/, "")}/${heroImageUrl.replace(/^\/+/, "")}`,
+      );
       setIsRevealVisible(true);
     }
   };
@@ -128,7 +132,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
               </h2>
               <p className="font-sans text-[9px] text-secondary/40 uppercase tracking-widest mt-1">
                 {formatPropertyType(property.propertyType)}
-                {property.acreage ? ` / ${property.acreage} ${property.acreage === 1 ? "acre" : "acres"}` : ""}
+                {property.acreage != null ? ` / ${property.acreage} ${property.acreage === 1 ? "acre" : "acres"}` : ""}
               </p>
             </div>
 
@@ -142,9 +146,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
             {/* Type */}
             <div className="col-span-3 text-right">
               <p className="text-xl font-black tracking-tighter text-secondary/80">
-                {property.propertyType
-                  ? formatPropertyType(property.propertyType)
-                  : "—"}
+                {formatPropertyType(property.propertyType)}
               </p>
             </div>
           </Link>
@@ -154,7 +156,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
         <div
           ref={overlayRef}
           aria-hidden="true"
-          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-20 overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hidden md:block"
+          className="fixed w-[250px] md:w-[400px] h-[300px] md:h-[500px] pointer-events-none z-20 overflow-hidden transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hidden md:block"
           style={{
             opacity: isRevealVisible ? 0.6 : 0,
             transform: `translate(-50%, -50%) scale(${isRevealVisible ? 1 : 0.8})`,
@@ -176,7 +178,7 @@ export function PropertyIndex({ properties, strapiUrl }: PropertyIndexProps) {
       {hasProperties && (
         <section
           aria-label="Portfolio stats"
-          className="fixed bottom-0 w-full bg-background border-t border-white/10 px-6 py-6 flex justify-between items-center z-[110]"
+          className="fixed bottom-0 w-full bg-background border-t border-white/10 px-6 py-6 flex justify-between items-center z-[40]"
         >
           <div className="flex gap-10 md:gap-16">
             <div>

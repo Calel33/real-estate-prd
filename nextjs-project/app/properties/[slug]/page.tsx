@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : `${property.title} — View property details.`,
     openGraph: ogImage
       ? {
-          images: [{ url: `${strapiUrl}${ogImage.url}` }],
+          images: [{ url: ogImage.url.startsWith("http") ? ogImage.url : `${strapiUrl}${ogImage.url}` }],
         }
       : undefined,
   };
@@ -124,59 +124,65 @@ export default async function PropertyDetailPage({ params }: Props) {
                   Technical_Highlights
                 </span>
                 <ul className="space-y-8">
-                  {acreage != null && (
-                    <li className="flex items-start gap-6">
-                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                        01
-                      </span>
-                      <div>
-                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                          Land_Footprint
-                        </p>
-                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                          {acreage} acres of prime terrain
-                        </p>
-                      </div>
-                    </li>
-                  )}
-                  {propertyType && (
-                    <li className="flex items-start gap-6">
-                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                        02
-                      </span>
-                      <div>
-                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                          Classification
-                        </p>
-                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose capitalize">
-                          {propertyType.replace("_", " ")} designation
-                        </p>
-                      </div>
-                    </li>
-                  )}
-                  {location && (
-                    <li className="flex items-start gap-6">
-                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                        {acreage != null && propertyType != null ? "03" : acreage != null || propertyType != null ? "02" : "01"}
-                      </span>
-                      <div>
-                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                          Geographic_Context
-                        </p>
-                        <div className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                          {geographicContextList ? (
-                            <ul className="list-disc pl-4 space-y-1">
-                              {geographicContextList.map((item) => (
-                                <li key={item}>{item}</li>
-                              ))}
-                            </ul>
+                  {(() => {
+                    const highlights: Array<{
+                      label: string;
+                      content: React.ReactNode;
+                      contentClassName?: string;
+                    }> = [];
+
+                    if (acreage != null) {
+                      highlights.push({
+                        label: "Land_Footprint",
+                        content: `${acreage} ${acreage === 1 ? "acre" : "acres"} of prime terrain`,
+                      });
+                    }
+                    if (propertyType) {
+                      highlights.push({
+                        label: "Classification",
+                        content: `${propertyType.replace(/_/g, " ")} designation`,
+                        contentClassName: "capitalize",
+                      });
+                    }
+                    if (location) {
+                      highlights.push({
+                        label: "Geographic_Context",
+                        content: geographicContextList ? (
+                          <ul className="list-disc pl-4 space-y-1">
+                            {geographicContextList.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        ) : (
+                          geographicContext
+                        ),
+                      });
+                    }
+
+                    return highlights.map((item, i) => (
+                      <li key={item.label} className="flex items-start gap-6">
+                        <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div>
+                          <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
+                            {item.label}
+                          </p>
+                          {item.label === "Geographic_Context" ? (
+                            <div className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
+                              {item.content}
+                            </div>
                           ) : (
-                            geographicContext
+                            <p
+                              className={`font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose ${item.contentClassName ?? ""}`}
+                            >
+                              {item.content}
+                            </p>
                           )}
                         </div>
-                      </div>
-                    </li>
-                  )}
+                      </li>
+                    ));
+                  })()}
                 </ul>
               </div>
 
@@ -195,7 +201,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                         Property_Id
                       </p>
                       <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                        {propertyId}
+                        {propertyId ?? "—"}
                       </p>
                     </div>
                   </li>
@@ -236,7 +242,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                         Ownership
                       </p>
                       <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                        {ownership}
+                        {ownership ?? "—"}
                       </p>
                     </div>
                   </li>
@@ -265,7 +271,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                 />
               ) : mapImage ? (
                 <Image
-                  src={`${strapiUrl}${mapImage.url}`}
+                  src={mapImage.url.startsWith("http") ? mapImage.url : `${strapiUrl}${mapImage.url}`}
                   alt={mapImage.alternativeText ?? `Map of ${title}`}
                   fill
                   sizes="(max-width: 1024px) 100vw, 896px"

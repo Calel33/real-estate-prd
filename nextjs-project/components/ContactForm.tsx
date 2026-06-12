@@ -271,7 +271,7 @@ function slabInputClass(error?: string[], extra = ""): string {
     "w-full bg-[--color-surface] border-0 border-l-2 py-7 px-7 sm:py-9 sm:px-9 " +
     "text-[--color-secondary] text-xl sm:text-2xl font-black " +
     "placeholder:text-white/[0.06] placeholder:font-normal placeholder:uppercase placeholder:tracking-tighter " +
-    "transition-all duration-400 tracking-tight " +
+    "transition-all duration-[400ms] tracking-tight " +
     "focus:outline-none focus:border-l-[--color-primary] focus:bg-[#1a1a1a] focus:pl-9 sm:focus:pl-12";
   if (error) {
     return `${base} border-l-red-500/60 focus:border-l-red-500 ${extra}`.trim();
@@ -284,7 +284,7 @@ function slabSelectClass(): string {
     "w-full bg-[--color-surface] border-0 border-l-2 border-l-transparent " +
     "py-7 px-7 sm:py-9 sm:px-9 " +
     "text-[--color-secondary] text-xl sm:text-2xl font-black " +
-    "transition-all duration-400 appearance-none cursor-pointer tracking-tight " +
+    "transition-all duration-[400ms] appearance-none cursor-pointer tracking-tight " +
     "focus:outline-none focus:border-l-[--color-primary] focus:bg-[#1a1a1a] focus:pl-9 sm:focus:pl-12"
   );
 }

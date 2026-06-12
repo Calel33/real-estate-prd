@@ -170,12 +170,7 @@ export default async function AboutPage() {
             {/* ── CTA ── */}
             <Link
               href="/properties"
-              className="group relative inline-flex items-center gap-3 px-10 py-4 overflow-hidden rounded-glass backdrop-blur-[2px] border text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-700 hover:pl-14 hover:text-background"
-              style={{
-                backgroundColor: "rgba(242, 234, 211, 0.1)",
-                borderColor: "rgba(242, 234, 211, 0.2)",
-                color: "var(--color-primary)",
-              }}
+              className="group relative inline-flex items-center gap-3 px-10 py-4 overflow-hidden rounded-glass backdrop-blur-[2px] border border-primary/20 bg-primary/10 text-primary text-[11px] uppercase tracking-[0.25em] font-medium transition-all duration-700 hover:pl-14 hover:bg-primary hover:text-background"
             >
               <span className="relative z-10">Explore Portfolio</span>
               <span className="relative z-10 text-base transition-transform duration-700 group-hover:translate-x-1">
