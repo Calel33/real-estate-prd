@@ -12,10 +12,10 @@ const SinglePropertyResponseSchema = z.object({
   data: z.array(PropertySchema).max(1),
   meta: z.object({
     pagination: z.object({
-      page: z.number(),
-      pageSize: z.number(),
-      pageCount: z.number(),
-      total: z.number(),
+      page: z.number().optional(),
+      pageSize: z.number().optional(),
+      pageCount: z.number().optional(),
+      total: z.number().optional(),
     }),
   }),
 });
@@ -24,10 +24,10 @@ const PropertyListResponseSchema = z.object({
   data: z.array(PropertySchema),
   meta: z.object({
     pagination: z.object({
-      page: z.number(),
-      pageSize: z.number(),
-      pageCount: z.number(),
-      total: z.number(),
+      page: z.number().optional(),
+      pageSize: z.number().optional(),
+      pageCount: z.number().optional(),
+      total: z.number().optional(),
     }),
   }),
 });
