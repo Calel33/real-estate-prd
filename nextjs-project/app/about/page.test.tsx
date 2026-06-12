@@ -105,7 +105,7 @@ function createAbout(overrides: Partial<About> = {}): About {
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  vi.resetModules();
+  vi.clearAllMocks();
 });
 
 afterEach(() => {
@@ -170,7 +170,7 @@ describe("About Page (Server Component) — Monolith Design", () => {
 
     // Should show placeholder manifesto text
     expect(
-      screen.getByText(/Disrupt the Block operates as a singular point/i),
+      screen.getByText(/Land is the oldest asset class on earth/i),
     ).toBeInTheDocument();
   });
 
@@ -199,7 +199,7 @@ describe("About Page (Server Component) — Monolith Design", () => {
 
     // Top corner brand markers should be present
     expect(screen.getByText("Est. 2024")).toBeInTheDocument();
-    expect(screen.getByText("Global Portfolio")).toBeInTheDocument();
+    expect(screen.getByText("DTB Belize")).toBeInTheDocument();
   });
 
   it("renders stat grid with portfolio and approach", async () => {
@@ -209,8 +209,8 @@ describe("About Page (Server Component) — Monolith Design", () => {
     const result = await AboutPage();
     render(result);
 
-    expect(screen.getByText("Curated Estates")).toBeInTheDocument();
-    expect(screen.getByText("White-Glove Service")).toBeInTheDocument();
+    expect(screen.getByText("Physical + Digital")).toBeInTheDocument();
+    expect(screen.getByText("Held Today. Liquid Tomorrow.")).toBeInTheDocument();
   });
 
   it("renders CTA link to properties", async () => {

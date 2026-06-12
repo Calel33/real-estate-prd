@@ -7,9 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const globalData = await intake.global();
 
   return {
-    title:
-      globalData.defaultSeo?.metaTitle ??
-      `Contact \u2014 ${globalData.siteName}`,
+    title: `Contact \u2014 ${globalData.siteName}`,
     description:
       globalData.defaultSeo?.metaDescription ?? globalData.siteDescription,
     openGraph: globalData.defaultSeo?.shareImage

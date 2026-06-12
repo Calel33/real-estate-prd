@@ -3,7 +3,7 @@ import { z } from "zod";
 import { ContactFormInputSchema } from "@/lib/schemas/contact-form";
 import { intake } from "@/lib/intake";
 import { sendContactEmail } from "@/lib/resend";
-import { StrapiError } from "@/lib/fetch";
+import { StrapiError, StrapiNetworkError, StrapiValidationError } from "@/lib/fetch";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 // Rate limit: 5 submissions per IP per 60 seconds.
@@ -56,7 +56,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 3. POST to Strapi
     await intake.submission(data);
   } catch (error) {
-    if (error instanceof StrapiError) {
+    if (
+      error instanceof StrapiError ||
+      error instanceof StrapiNetworkError ||
+      error instanceof StrapiValidationError
+    ) {
       return NextResponse.json(
         { error: "Failed to save message. Please try again later." },
         { status: 502 },

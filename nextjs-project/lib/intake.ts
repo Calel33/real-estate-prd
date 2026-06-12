@@ -1,8 +1,10 @@
+import "server-only";
 import { z } from "zod";
 import { strapiFetch, StrapiError } from "./fetch";
 import { PropertySchema, type Property } from "@/lib/schemas/property";
 import { AboutSchema, type About } from "@/lib/schemas/about";
 import { GlobalSchema, type Global } from "@/lib/schemas/global";
+import { ContactFormInputSchema, type ContactFormInput } from "@/lib/schemas/contact-form";
 
 // ── Private response schemas ────────────────────────────────────────────────
 
@@ -10,10 +12,10 @@ const SinglePropertyResponseSchema = z.object({
   data: z.array(PropertySchema).max(1),
   meta: z.object({
     pagination: z.object({
-      page: z.number(),
-      pageSize: z.number(),
-      pageCount: z.number(),
-      total: z.number(),
+      page: z.number().optional(),
+      pageSize: z.number().optional(),
+      pageCount: z.number().optional(),
+      total: z.number().optional(),
     }),
   }),
 });
@@ -22,10 +24,10 @@ const PropertyListResponseSchema = z.object({
   data: z.array(PropertySchema),
   meta: z.object({
     pagination: z.object({
-      page: z.number(),
-      pageSize: z.number(),
-      pageCount: z.number(),
-      total: z.number(),
+      page: z.number().optional(),
+      pageSize: z.number().optional(),
+      pageCount: z.number().optional(),
+      total: z.number().optional(),
     }),
   }),
 });
@@ -40,13 +42,7 @@ const GlobalResponseSchema = z.object({
   meta: z.object({}).optional(),
 });
 
-const CreateSubmissionInputSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  message: z.string().min(1),
-});
-
-type CreateSubmissionInput = z.infer<typeof CreateSubmissionInputSchema>;
+export type CreateSubmissionInput = ContactFormInput;
 
 const CreateSubmissionResponseSchema = z.object({
   data: z.object({
@@ -64,7 +60,7 @@ const CreateSubmissionResponseSchema = z.object({
 
 // ── Private fallback values ─────────────────────────────────────────────────
 
-const EMPTY_ABOUT: About = {
+export const EMPTY_ABOUT: About = {
   id: 0,
   documentId: "about-placeholder",
   title: null,
@@ -79,7 +75,12 @@ export const intake = {
    * Returns the property or null if not found.
    */
   async property(slug: string): Promise<Property | null> {
-    const path = `/api/properties?populate=*&filters[slug][$eq]=${encodeURIComponent(slug)}`;
+    const params = new URLSearchParams({
+      populate: "*",
+      "filters[slug][$eq]": slug,
+      "filters[status][$eq]": "published",
+    });
+    const path = `/api/properties?${params.toString()}`;
 
     const response = await strapiFetch(path, SinglePropertyResponseSchema, {
       revalidate: 0,
@@ -92,7 +93,7 @@ export const intake = {
    * Fetch all published properties.
    */
   async properties(): Promise<Property[]> {
-    const path = "/api/properties?populate=*&filters[status][$eq]=published";
+    const path = "/api/properties?populate=*&filters[status][$eq]=published&pagination[limit]=-1";
 
     const response = await strapiFetch(path, PropertyListResponseSchema, {
       revalidate: 0,
@@ -105,8 +106,8 @@ export const intake = {
   /**
    * Fetch the About page content (single type).
    *
-   * Returns an empty fallback when the Strapi server is unreachable
-   * or the About single type entry has not been created yet (HTTP 404).
+   * Returns an empty fallback when the About single type entry
+   * has not been created yet (HTTP 404).
    * This lets the page render during development before content is seeded.
    */
   async about(): Promise<About> {
@@ -152,14 +153,19 @@ export const intake = {
    * Uses the Strapi API token for authorization.
    */
   async submission(input: CreateSubmissionInput): Promise<{ id: number; documentId: string }> {
-    const validated = CreateSubmissionInputSchema.parse(input);
+    const validated = ContactFormInputSchema.parse(input);
+    const submissionData = {
+      name: validated.name,
+      email: validated.email,
+      message: validated.message,
+    };
 
     const path = "/api/submissions";
     const response = await strapiFetch(path, CreateSubmissionResponseSchema, {
       method: "POST",
       body: {
         data: {
-          ...validated,
+          ...submissionData,
           submittedAt: new Date().toISOString(),
         },
       },

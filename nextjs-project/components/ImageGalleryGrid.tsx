@@ -112,18 +112,28 @@ export function ImageGalleryGrid({
             const tag = getImageTag(index, image);
 
             const isInteractive = onImageClick !== undefined;
+            const Wrapper = isInteractive ? "button" : "div";
+            const wrapperProps = isInteractive
+              ? {
+                  type: "button" as const,
+                  onClick: () => onImageClick!(index),
+                  "aria-label": `View ${image.alternativeText ?? image.name ?? "Image"}`,
+                }
+              : {};
 
-            return isInteractive ? (
-              <button
+            return (
+              <Wrapper
                 key={image.documentId}
-                type="button"
-                onClick={() => onImageClick(index)}
-                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer transition-[filter] duration-500`}
-                aria-label={`View ${image.alternativeText ?? image.name}`}
+                {...wrapperProps}
+                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface transition-[filter] duration-500 ${
+                  isInteractive
+                    ? "focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
+                    : ""
+                }`}
               >
                 <Image
-                  src={`${strapiUrl}${image.url}`}
-                  alt={image.alternativeText ?? image.name}
+                  src={image.url.startsWith("http") ? image.url : `${strapiUrl}${image.url}`}
+                  alt={image.alternativeText ?? image.name ?? "Image"}
                   fill
                   priority={index === 0}
                   sizes={index === 0 ? "(max-width: 1024px) 100vw, 67vw" : "(max-width: 1024px) 100vw, 33vw"}
@@ -134,26 +144,7 @@ export function ImageGalleryGrid({
                 <span className="pointer-events-none absolute top-5 left-5 bg-black/70 text-primary/80 font-sans text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                   {tag}
                 </span>
-              </button>
-            ) : (
-              <div
-                key={image.documentId}
-                className={`${col} ${lgCol} ${height} group relative overflow-hidden bg-surface transition-[filter] duration-500`}
-              >
-                <Image
-                  src={`${strapiUrl}${image.url}`}
-                  alt={image.alternativeText ?? image.name}
-                  fill
-                  priority={index === 0}
-                  sizes={index === 0 ? "(max-width: 1024px) 100vw, 67vw" : "(max-width: 1024px) 100vw, 33vw"}
-                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.99]"
-                />
-
-                {/* Technical scan tag — appears on hover */}
-                <span className="pointer-events-none absolute top-5 left-5 bg-black/70 text-primary/80 font-sans text-[9px] uppercase tracking-[0.2em] px-2.5 py-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  {tag}
-                </span>
-              </div>
+              </Wrapper>
             );
           })}
         </div>

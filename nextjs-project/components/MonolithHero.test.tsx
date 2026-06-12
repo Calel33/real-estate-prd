@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import { MonolithHero } from "./MonolithHero";
 
@@ -22,7 +23,7 @@ describe("MonolithHero", () => {
   });
 
   it("shows brand headline", () => {
-    render(<MonolithHero tagline="Real Assets. Digital Future." />);
+    render(<MonolithHero tagline="Real Assets. Digital Future." headline="DISRUPT\nTHE BLOCK" />);
 
     const heading = screen.getByRole("heading", { level: 1 });
     expect(heading).toHaveTextContent(/DISRUPT/);
