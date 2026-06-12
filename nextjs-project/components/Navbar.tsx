@@ -21,7 +21,7 @@ export function Navbar() {
       {/* Glass gradient shell */}
       <div className="mx-4 mt-4 rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
         {/* Glass content surface */}
-        <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] px-6 py-4 flex items-center justify-between">
+        <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-4 flex items-center justify-between">
           {/* Logo */}
           <span className="font-display font-black text-primary text-lg">
             DTB

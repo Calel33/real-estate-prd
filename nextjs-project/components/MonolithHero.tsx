@@ -61,14 +61,14 @@ export function MonolithHero({
       {/* Centered hero content */}
       <div className="relative z-10 text-center flex flex-col items-center px-6 py-24">
         {tagline && (
-          <div className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.2s]">
+          <div className="animate-slide-up animation-delay-200 opacity-0">
             <span className="text-[10px] uppercase tracking-[0.5em] mb-6 block text-primary/70">
               {tagline}
             </span>
           </div>
         )}
 
-        <h1 className="animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.4s] font-display text-[clamp(3.5rem,12vw,12rem)] leading-[0.85] tracking-[-0.03em] uppercase font-black text-primary">
+        <h1 className="animate-slide-up animation-delay-400 opacity-0 font-display text-[clamp(3.5rem,12vw,12rem)] leading-[0.85] tracking-[-0.03em] uppercase font-black text-primary">
             {headline.split("\n").map((line, i, arr) => (
               <span key={line}>
                 {line}
@@ -77,7 +77,7 @@ export function MonolithHero({
             ))}
         </h1>
 
-        <div className="mt-10 animate-[slide-up_1.2s_cubic-bezier(0.16,1,0.3,1)_forwards] opacity-0 [animation-delay:0.6s] flex flex-col items-center gap-8">
+        <div className="mt-10 animate-slide-up animation-delay-600 opacity-0 flex flex-col items-center gap-8">
           <p className="max-w-md text-xs tracking-[0.25em] leading-loose uppercase text-white/40">
             {description}
           </p>
