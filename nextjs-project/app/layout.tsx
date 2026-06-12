@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { ConditionalNavbar } from "@/components/ConditionalNavbar";
-import { Footer } from "@/components/Footer";
+import { ConditionalNavbar, ConditionalFooter } from "@/components/ConditionalNavbar";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -17,9 +16,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Zenith — Real Estate Portfolio",
+  title: "Disrupt the Block — Premium Real Estate for a Digital Future",
   description:
-    "Premium real estate portfolio showcasing exceptional properties.",
+    "Disrupt the Block pairs exceptional properties with blockchain infrastructure. Explore our portfolio of premium real estate, built for the next era of ownership.",
 };
 
 export default function RootLayout({
@@ -35,7 +34,7 @@ export default function RootLayout({
       <body className="bg-background text-secondary font-sans min-h-screen flex flex-col">
         <ConditionalNavbar />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <ConditionalFooter />
       </body>
     </html>
   );

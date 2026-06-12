@@ -96,7 +96,11 @@ function createProperty(overrides: Partial<Property> = {}): Property {
       createMedia({ id: 2, documentId: "media-002", url: "/uploads/gallery1.jpg" }),
       createMedia({ id: 3, documentId: "media-003", url: "/uploads/gallery2.jpg" }),
     ],
+    map: null,
     mapImage: null,
+    ft2: 21780000,
+    propertyId: "PROP-001",
+    ownership: "Fractional / Tokenized",
     status: "published",
     publishedAt: "2026-04-01T00:00:00.000Z",
     createdAt: "2026-04-01T00:00:00.000Z",
@@ -238,9 +242,55 @@ describe("Property Detail Page (Server Component)", () => {
     ).toBeInTheDocument();
   });
 
-  it("does not render map section when mapImage is null", async () => {
+  it("renders map field coordinates when map is provided", async () => {
     vi.mocked(intake.property).mockResolvedValue(
-      createProperty({ mapImage: null }),
+      createProperty({
+        location: null,
+        map: {
+          place_name: "Cayo District, Belize",
+          geometry: { type: "Point", coordinates: [-88.9, 17.2] },
+        },
+        mapImage: null,
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    expect(
+      screen.getByTitle("Map of Sunset Valley Ranch"),
+    ).toHaveAttribute("src", expect.stringContaining("17.2%2C-88.9"));
+  });
+
+  it("uses Emri Village Belize as the map fallback location", async () => {
+    vi.mocked(intake.property).mockResolvedValue(
+      createProperty({
+        title: "Emri Village",
+        slug: "emri-village",
+        location: "Cayo District, Belize",
+        map: null,
+        mapImage: null,
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "emri-village" }),
+    });
+    render(result);
+
+    expect(screen.getByTitle("Map of Emri Village")).toHaveAttribute(
+      "src",
+      expect.stringContaining("Emri%20Village%2C%20Belize"),
+    );
+  });
+
+  it("does not render map section when map data and mapImage are null", async () => {
+    vi.mocked(intake.property).mockResolvedValue(
+      createProperty({ location: null, map: null, mapImage: null }),
     );
 
     const { default: PropertyPage } = await import("./page");

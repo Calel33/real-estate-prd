@@ -157,7 +157,12 @@ export const intake = {
     const path = "/api/submissions";
     const response = await strapiFetch(path, CreateSubmissionResponseSchema, {
       method: "POST",
-      body: { data: validated },
+      body: {
+        data: {
+          ...validated,
+          submittedAt: new Date().toISOString(),
+        },
+      },
       useToken: true,
       revalidate: false,
     });

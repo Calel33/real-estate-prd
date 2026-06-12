@@ -62,10 +62,10 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
             children
           ) : (
             <>
-              <span className="font-sans text-xs uppercase tracking-widest text-secondary/50">
+              <span className="font-sans font-black text-xs uppercase tracking-widest text-secondary/50">
                 Featured Property
               </span>
-              <h1 className="font-display text-5xl md:text-8xl text-primary leading-tight mt-2">
+              <h1 className="font-display font-black text-5xl md:text-8xl text-primary leading-tight mt-2">
                 {title}
               </h1>
               {location && (

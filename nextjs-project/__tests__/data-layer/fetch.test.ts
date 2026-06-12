@@ -3,7 +3,6 @@ import { strapiFetch, StrapiError, StrapiValidationError } from "@/lib/fetch";
 import { intake } from "@/lib/intake";
 import { resetEnv } from "@/lib/env";
 import { z } from "zod";
-import { PropertySchema } from "@/lib/schemas/property";
 
 // ---------------------------------------------------------------------------
 // Test fixtures
@@ -18,12 +17,16 @@ const validPropertyData = {
   slug: "mountain-ranch-estate",
   location: "Bozeman, MT",
   acreage: 250.5,
+  ft2: "10911780",
   propertyType: "ranch" as const,
   description: null,
   heroImage: null,
   heroVideo: null,
   gallery: null,
+  map: null,
   mapImage: null,
+  propertyId: "PROP-001",
+  ownership: "Fractional / Tokenized",
   status: "published" as const,
   publishedAt: "2026-04-01T00:00:00.000Z",
   createdAt: "2026-04-01T00:00:00.000Z",
@@ -203,6 +206,7 @@ describe("intake.properties", () => {
     expect(properties).toHaveLength(1);
     expect(properties[0].title).toBe("Mountain Ranch Estate");
     expect(properties[0].slug).toBe("mountain-ranch-estate");
+    expect(properties[0].ft2).toBe(10911780);
   });
 
   it("returns empty array when no properties exist", async () => {
@@ -500,6 +504,8 @@ describe("intake.submission", () => {
         }),
       }),
     );
+    const [, fetchOptions] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(fetchOptions.body).toEqual(expect.stringContaining('"submittedAt"'));
   });
 
   it("validates input", async () => {

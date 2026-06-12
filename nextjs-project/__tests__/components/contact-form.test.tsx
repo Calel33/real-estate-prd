@@ -234,6 +234,7 @@ describe("ContactForm", () => {
           body: JSON.stringify({
             name: "Jane",
             email: "jane@example.com",
+            purpose: "",
             message: "Hello from Jane",
           }),
         }),
@@ -326,7 +327,7 @@ describe("ContactForm", () => {
   // Submit button pending state
   // ----------
 
-  it("shows Sending... text on the button during submission", async () => {
+  it("shows Transmitting... text on the button during submission", async () => {
     // Don't resolve the fetch — keep the pending state
     let resolveFetch: (value: unknown) => void;
     mockFetch.mockReturnValueOnce(
@@ -347,7 +348,7 @@ describe("ContactForm", () => {
     await user.click(button);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Sending..." })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Transmitting..." })).toBeInTheDocument();
     });
 
     // Cleanup: resolve the promise to avoid hanging

@@ -8,6 +8,12 @@ export default {
    * This gives you an opportunity to extend code.
    */
   register({ strapi }: { strapi: Core.Strapi }) {
+    strapi.customFields.register({
+      name: 'map-field',
+      plugin: 'map-field',
+      type: 'json',
+    });
+
     // Document Service middleware: fires on property publish/unpublish/delete
     // to trigger Next.js cache revalidation via webhook.
     strapi.documents.use(async (context, next) => {

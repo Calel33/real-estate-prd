@@ -27,7 +27,7 @@ function BlockNode({ node }: { node: StrapiBlockNode }) {
     case "paragraph":
       return (
         <p className="text-secondary/70 text-lg leading-relaxed font-sans">
-          <InlineChildren children={node.children} />
+          <InlineChildren>{node.children}</InlineChildren>
         </p>
       );
 
@@ -45,7 +45,7 @@ function BlockNode({ node }: { node: StrapiBlockNode }) {
 
       return (
         <Tag className={sizeClasses[level] ?? sizeClasses[2]}>
-          <InlineChildren children={node.children} />
+          <InlineChildren>{node.children}</InlineChildren>
         </Tag>
       );
     }
@@ -54,7 +54,7 @@ function BlockNode({ node }: { node: StrapiBlockNode }) {
       // Fallback: render as paragraph for unknown block types
       return node.children ? (
         <p className="text-secondary/70 text-lg leading-relaxed font-sans">
-          <InlineChildren children={node.children} />
+          <InlineChildren>{node.children}</InlineChildren>
         </p>
       ) : null;
   }

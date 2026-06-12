@@ -6,7 +6,7 @@ describe("Navbar", () => {
   it("renders the brand name", () => {
     render(<Navbar />);
 
-    expect(screen.getByText("Zenith")).toBeInTheDocument();
+    expect(screen.getByText("DTB")).toBeInTheDocument();
   });
 
   it("renders all four navigation links", () => {

@@ -14,8 +14,8 @@
   "attributes": {
     "title": {
       "type": "string",
-      "required": true,
-      "maxLength": 255
+      "maxLength": 255,
+      "required": true
     },
     "slug": {
       "type": "uid",
@@ -28,6 +28,9 @@
     },
     "acreage": {
       "type": "float"
+    },
+    "ft2": {
+      "type": "biginteger"
     },
     "propertyType": {
       "type": "enumeration",
@@ -47,36 +50,55 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "heroVideo": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["videos"]
+      "allowedTypes": [
+        "videos"
+      ]
     },
     "gallery": {
       "type": "media",
       "multiple": true,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "map": {
+      "type": "customField",
+      "required": false,
+      "customField": "plugin::map-field.map-field"
     },
     "mapImage": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
-    "highlights": {
-      "type": "json"
+    "propertyId": {
+      "type": "string",
+      "maxLength": 255
     },
-    "locationAccess": {
-      "type": "json"
+    "ownership": {
+      "type": "string",
+      "default": "Fractional / Tokenized",
+      "maxLength": 255
     },
     "status": {
       "type": "enumeration",
-      "enum": ["draft", "published"],
-      "default": "draft"
+      "default": "draft",
+      "enum": [
+        "draft",
+        "published"
+      ]
     }
   }
 }

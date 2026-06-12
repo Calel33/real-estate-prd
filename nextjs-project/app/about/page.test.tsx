@@ -20,22 +20,40 @@ vi.mock("@/lib/env", () => ({
   getEnv: () => ({ STRAPI_URL: "http://localhost:1337" }),
 }));
 
-// Mock Next.js Image to render as a regular img for testing
-vi.mock("next/image", () => ({
-  default: (props: {
-    src: string;
-    alt: string;
-    fill?: boolean;
-    priority?: boolean;
-    sizes?: string;
-    className?: string;
+// Mock Next.js Link to render as a regular anchor for testing
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: {
+    href: string;
+    children: React.ReactNode;
+    [key: string]: unknown;
   }) => (
-    <img
-      src={props.src}
-      alt={props.alt}
-      data-nimg={props.fill ? "fill" : undefined}
-      className={props.className}
-    />
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+}));
+
+// Mock DynamicZoneRenderer
+vi.mock("@/components/DynamicZoneRenderer", () => ({
+  DynamicZoneRenderer: ({
+    blocks,
+  }: {
+    blocks: unknown[];
+    strapiUrl: string;
+  }) => (
+    <div data-testid="dynamic-zone">
+      {blocks.length > 0
+        ? blocks.map((b: Record<string, unknown>, i: number) => (
+            <span key={i} data-testid="block-content">
+              {String(b.body ?? "")}
+            </span>
+          ))
+        : null}
+    </div>
   ),
 }));
 
@@ -95,8 +113,8 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("About Page (Server Component)", () => {
-  it("renders the about page title", async () => {
+describe("About Page (Server Component) — Monolith Design", () => {
+  it("renders the about page title as monolith heading", async () => {
     vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
@@ -119,22 +137,26 @@ describe("About Page (Server Component)", () => {
     expect(
       screen.getByText(/We connect people with extraordinary properties/),
     ).toBeInTheDocument();
+    expect(screen.getByTestId("dynamic-zone")).toBeInTheDocument();
   });
 
-  it("renders with null title gracefully", async () => {
+  it("renders with null title — falls back to 'About Disrupt the Block'", async () => {
     vi.mocked(intake.about).mockResolvedValue(createAbout({ title: null }));
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
     render(result);
 
-    // Should still render blocks even without title
+    // Should render fallback heading and still render blocks
+    expect(
+      screen.getByRole("heading", { name: /about disrupt the block/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/We connect people with extraordinary properties/),
     ).toBeInTheDocument();
   });
 
-  it("renders with empty blocks array", async () => {
+  it("renders with empty blocks array — shows manifesto placeholder", async () => {
     vi.mocked(intake.about).mockResolvedValue(createAbout({ blocks: [] }));
 
     const { default: AboutPage } = await import("./page");
@@ -145,33 +167,61 @@ describe("About Page (Server Component)", () => {
     expect(
       screen.getByRole("heading", { name: /about us/i }),
     ).toBeInTheDocument();
+
+    // Should show placeholder manifesto text
+    expect(
+      screen.getByText(/Disrupt the Block operates as a singular point/i),
+    ).toBeInTheDocument();
   });
 
-  it("applies responsive layout classes", async () => {
+  it("applies monolith layout structure", async () => {
     vi.mocked(intake.about).mockResolvedValue(createAbout());
 
     const { default: AboutPage } = await import("./page");
     const result = await AboutPage();
     const { container } = render(result);
 
-    // The inner content container should have max-width constraint
-    const section = container.querySelector("section");
-    expect(section).toBeInTheDocument();
-    const innerDiv = section?.querySelector("div");
-    expect(innerDiv).toBeInTheDocument();
-    const className = innerDiv?.getAttribute("class") ?? "";
-    expect(className).toContain("max-w-7xl");
-  });
-
-  it("uses correct page container structure", async () => {
-    vi.mocked(intake.about).mockResolvedValue(createAbout());
-
-    const { default: AboutPage } = await import("./page");
-    const result = await AboutPage();
-    const { container } = render(result);
-
-    // Should have an about section landmark
+    // The section should exist with correct aria label
     const section = container.querySelector("section[aria-label='About us']");
     expect(section).toBeInTheDocument();
+
+    // Should have max-width constraint for content
+    const innerDiv = section?.querySelector(".max-w-7xl");
+    expect(innerDiv).toBeInTheDocument();
+  });
+
+  it("renders corner brand-marker badges", async () => {
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
+
+    const { default: AboutPage } = await import("./page");
+    const result = await AboutPage();
+    render(result);
+
+    // Top corner brand markers should be present
+    expect(screen.getByText("Est. 2024")).toBeInTheDocument();
+    expect(screen.getByText("Global Portfolio")).toBeInTheDocument();
+  });
+
+  it("renders stat grid with portfolio and approach", async () => {
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
+
+    const { default: AboutPage } = await import("./page");
+    const result = await AboutPage();
+    render(result);
+
+    expect(screen.getByText("Curated Estates")).toBeInTheDocument();
+    expect(screen.getByText("White-Glove Service")).toBeInTheDocument();
+  });
+
+  it("renders CTA link to properties", async () => {
+    vi.mocked(intake.about).mockResolvedValue(createAbout());
+
+    const { default: AboutPage } = await import("./page");
+    const result = await AboutPage();
+    render(result);
+
+    const cta = screen.getByRole("link", { name: /explore portfolio/i });
+    expect(cta).toBeInTheDocument();
+    expect(cta).toHaveAttribute("href", "/properties");
   });
 });
