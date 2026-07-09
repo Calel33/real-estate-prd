@@ -377,7 +377,7 @@ describe("intake.about", () => {
     expect(about).toEqual(EMPTY_ABOUT);
   });
 
-  it("returns EMPTY_ABOUT on forbidden public access", async () => {
+  it("throws on forbidden public access", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -388,8 +388,7 @@ describe("intake.about", () => {
       }),
     );
 
-    const about = await intake.about();
-    expect(about).toEqual(EMPTY_ABOUT);
+    await expect(intake.about()).rejects.toThrow(StrapiError);
   });
 });
 
@@ -450,7 +449,7 @@ describe("intake.global", () => {
     expect(global).toEqual(EMPTY_GLOBAL);
   });
 
-  it("returns EMPTY_GLOBAL on forbidden public access", async () => {
+  it("throws on forbidden public access", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -461,8 +460,7 @@ describe("intake.global", () => {
       }),
     );
 
-    const global = await intake.global();
-    expect(global).toEqual(EMPTY_GLOBAL);
+    await expect(intake.global()).rejects.toThrow(StrapiError);
   });
 
   it("throws on validation failure", async () => {

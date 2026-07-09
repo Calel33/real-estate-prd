@@ -6,7 +6,7 @@ export function DevelopmentComingSoon() {
           <div className="rounded-glass bg-surface/80 backdrop-blur-md px-8 py-8 md:px-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
             <div className="flex items-center gap-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background border border-white/10 shadow-glass shrink-0">
-                <span className="w-3 h-3 rounded-full bg-primary shadow-[0_0_15px_rgba(242,234,211,0.5)] animate-pulse" />
+                <span className="w-3 h-3 rounded-full bg-primary animate-pulse" />
               </div>
               <div>
                 <h3 className="font-sans text-sm font-black uppercase tracking-[0.2em] text-primary mb-1">

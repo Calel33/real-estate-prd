@@ -134,11 +134,8 @@ export const intake = {
 
       return response.data;
     } catch (error) {
-      // Return empty fallback when About content is missing or not public.
-      if (
-        error instanceof StrapiError &&
-        [401, 403, 404].includes(error.status)
-      ) {
+      // Return empty fallback when About content is missing.
+      if (error instanceof StrapiError && error.status === 404) {
         return EMPTY_ABOUT;
       }
 
@@ -162,11 +159,8 @@ export const intake = {
 
       return response.data;
     } catch (error) {
-      // Return fallback metadata when global settings are missing or not public.
-      if (
-        error instanceof StrapiError &&
-        [401, 403, 404].includes(error.status)
-      ) {
+      // Return fallback metadata when global settings are missing.
+      if (error instanceof StrapiError && error.status === 404) {
         return EMPTY_GLOBAL;
       }
 
