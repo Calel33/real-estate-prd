@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { strapiFetch, StrapiError, StrapiValidationError } from "@/lib/fetch";
-import { intake, EMPTY_ABOUT } from "@/lib/intake";
+import { intake, EMPTY_ABOUT, EMPTY_GLOBAL } from "@/lib/intake";
 import { resetEnv } from "@/lib/env";
 import { z } from "zod";
 
@@ -327,8 +327,8 @@ describe("intake.about", () => {
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: "Bearer test-token",
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
         }),
       }),
     );
@@ -363,6 +363,7 @@ describe("intake.about", () => {
   });
 
   it("returns EMPTY_ABOUT on 404", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -375,6 +376,23 @@ describe("intake.about", () => {
 
     const about = await intake.about();
     expect(about).toEqual(EMPTY_ABOUT);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Failed to fetch About content (status: 404). Falling back to EMPTY_ABOUT.",
+    );
+  });
+
+  it("throws on forbidden public access", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        statusText: "Forbidden",
+        json: () => Promise.resolve({ error: { message: "Forbidden" } }),
+      }),
+    );
+
+    await expect(intake.about()).rejects.toThrow(StrapiError);
   });
 });
 
@@ -399,8 +417,8 @@ describe("intake.global", () => {
     expect(mockFetch).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: "Bearer test-token",
+        headers: expect.not.objectContaining({
+          Authorization: expect.any(String),
         }),
       }),
     );
@@ -414,6 +432,39 @@ describe("intake.global", () => {
         status: 500,
         statusText: "Error",
         json: () => Promise.resolve({}),
+      }),
+    );
+
+    await expect(intake.global()).rejects.toThrow(StrapiError);
+  });
+
+  it("returns EMPTY_GLOBAL on 404", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        statusText: "Not Found",
+        json: () => Promise.resolve({}),
+      }),
+    );
+
+    const global = await intake.global();
+    expect(global).toEqual(EMPTY_GLOBAL);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Failed to fetch Global settings (status: 404). Falling back to EMPTY_GLOBAL.",
+    );
+  });
+
+  it("throws on forbidden public access", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 403,
+        statusText: "Forbidden",
+        json: () => Promise.resolve({ error: { message: "Forbidden" } }),
       }),
     );
 

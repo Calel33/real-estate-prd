@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import type { Property } from "@/lib/schemas/property";
 import type { StrapiMedia } from "@/lib/schemas/strapi";
 
@@ -131,6 +131,90 @@ describe("Property Detail Page (Server Component)", () => {
       name: /sunset valley ranch/i,
     });
     expect(headings.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("hides default property details in the hero header", async () => {
+    vi.mocked(intake.property).mockResolvedValue(
+      createProperty({
+        title: "Emri Village",
+        slug: "emri-village",
+        location: "Cayo District, Belize",
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "emri-village" }),
+    });
+    render(result);
+
+    const hero = screen.getByRole("region", { name: /featured property/i });
+    expect(
+      within(hero).queryByRole("heading", { name: /emri village/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(hero).queryByText(/cayo district, belize/i),
+    ).not.toBeInTheDocument();
+    expect(
+      within(hero).queryByRole("link", { name: /view details/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders default property details in the hero header for non-Emri properties", async () => {
+    vi.mocked(intake.property).mockResolvedValue(createProperty());
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "sunset-valley-ranch" }),
+    });
+    render(result);
+
+    const hero = screen.getByRole("region", { name: /featured property/i });
+    expect(
+      within(hero).getByRole("heading", { name: /sunset valley ranch/i }),
+    ).toBeInTheDocument();
+    expect(within(hero).getByText(/austin, texas/i)).toBeInTheDocument();
+  });
+
+  it("links the Emri waitlist CTA to contact", async () => {
+    vi.mocked(intake.property).mockResolvedValue(
+      createProperty({
+        title: "Emri Village",
+        slug: "emri-village",
+        location: "Cayo District, Belize",
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "emri-village" }),
+    });
+    render(result);
+
+    expect(screen.getByRole("link", { name: /join waitlist/i })).toHaveAttribute(
+      "href",
+      "/contact",
+    );
+  });
+
+  it("does not render hardcoded Emri highlights", async () => {
+    vi.mocked(intake.property).mockResolvedValue(
+      createProperty({
+        title: "Emri Village",
+        slug: "emri-village",
+        location: "Cayo District, Belize",
+      }),
+    );
+
+    const { default: PropertyPage } = await import("./page");
+    const result = await PropertyPage({
+      params: Promise.resolve({ slug: "emri-village" }),
+    });
+    render(result);
+
+    expect(screen.queryByText(/utility-ready parcel/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/direct highway access/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/just 20 minutes from belmopan/i)).not.toBeInTheDocument();
   });
 
   it("renders the property location", async () => {

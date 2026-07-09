@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
+import { getGlobalMetadata } from "@/lib/metadata";
 import { MonolithHero } from "@/components/MonolithHero";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await intake.global();
+  const globalData = await getGlobalMetadata();
 
   return {
     title: globalData.siteName,

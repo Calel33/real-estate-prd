@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
+import { getGlobalMetadata } from "@/lib/metadata";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
 import { HeroSection } from "@/components/HeroSection";
+import { DevelopmentComingSoon } from "@/components/DevelopmentComingSoon";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
@@ -19,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const [property, globalData] = await Promise.all([
     intake.property(slug),
-    intake.global(),
+    getGlobalMetadata(),
   ]);
 
   if (!property) {
@@ -52,7 +54,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
 
   const strapiUrl = getEnv().STRAPI_URL;
-  const { title, location, acreage, ft2, propertyType, description, gallery, map, mapImage, propertyId, ownership } = property;
+  const { title, location, acreage, propertyType, description, gallery, map, mapImage } = property;
   const mapCoordinates = map?.geometry?.coordinates;
   const mapLongitude = mapCoordinates?.[0];
   const mapLatitude = mapCoordinates?.[1];
@@ -63,30 +65,25 @@ export default async function PropertyDetailPage({ params }: Props) {
   const mapQuery = hasMapCoordinates
     ? `${mapLatitude},${mapLongitude}`
     : mapLocation;
-  const geographicContext =
-    slug === "emri-village"
-      ? "Utility-ready parcel with direct highway access, just 20 minutes from Belmopan."
-      : location;
-  const geographicContextList =
-    slug === "emri-village"
-      ? ["Utility-ready parcel", "Direct highway access", "Just 20 minutes from Belmopan"]
-      : null;
-  const lotSizeFt2 =
-    slug === "emri-village" && acreage != null
-      ? Math.round(acreage * 43560)
-      : ft2;
+  const geographicContext = location;
 
   return (
     <>
       {/* Hero Section */}
       <HeroSection property={property} strapiUrl={strapiUrl}>
-        <h1 className="font-display font-black text-5xl md:text-8xl text-primary leading-tight mt-2">
-          {title}
-        </h1>
-        {location && (
-          <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
-            {location}
-          </p>
+        {slug === "emri-village" ? (
+          <></>
+        ) : (
+          <>
+            <h1 className="font-display font-black text-5xl md:text-8xl text-primary leading-tight mt-2">
+              {title}
+            </h1>
+            {location && (
+              <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
+                {location}
+              </p>
+            )}
+          </>
         )}
       </HeroSection>
 
@@ -147,15 +144,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     if (location) {
                       highlights.push({
                         label: "Geographic_Context",
-                        content: geographicContextList ? (
-                          <ul className="list-disc pl-4 space-y-1">
-                            {geographicContextList.map((item) => (
-                              <li key={item}>{item}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          geographicContext
-                        ),
+                        content: geographicContext,
                       });
                     }
 
@@ -186,68 +175,6 @@ export default async function PropertyDetailPage({ params }: Props) {
                 </ul>
               </div>
 
-              {/* Details Card */}
-              <div className="mt-8 rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-8 md:p-10">
-                <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-10 block font-black italic">
-                  Details
-                </span>
-                <ul className="space-y-8">
-                  <li className="flex items-start gap-6">
-                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                      01
-                    </span>
-                    <div>
-                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                        Property_Id
-                      </p>
-                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                        {propertyId ?? "—"}
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex items-start gap-6">
-                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                      02
-                    </span>
-                    <div>
-                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                        Property_Lot_Size
-                      </p>
-                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                        {lotSizeFt2 != null ? `${lotSizeFt2.toLocaleString()} sq ft` : acreage != null ? `${acreage} acres` : "—"}
-                      </p>
-                    </div>
-                  </li>
-                  {location && (
-                    <li className="flex items-start gap-6">
-                      <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                        03
-                      </span>
-                      <div>
-                        <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                          Location
-                        </p>
-                        <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                          {location}
-                        </p>
-                      </div>
-                    </li>
-                  )}
-                  <li className="flex items-start gap-6">
-                    <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                      {location ? "04" : "03"}
-                    </span>
-                    <div>
-                      <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                        Ownership
-                      </p>
-                      <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                        {ownership ?? "—"}
-                      </p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
@@ -287,6 +214,8 @@ export default async function PropertyDetailPage({ params }: Props) {
           </div>
         </section>
       )}
+
+      {slug === "emri-village" && <DevelopmentComingSoon />}
 
       {/* Gallery Grid with Lightbox */}
       <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />

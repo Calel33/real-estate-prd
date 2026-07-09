@@ -67,6 +67,20 @@ export const EMPTY_ABOUT: About = {
   blocks: [],
 };
 
+export const EMPTY_GLOBAL: Global = {
+  id: 0,
+  documentId: "global-placeholder",
+  siteName: "Disrupt the Block",
+  siteDescription:
+    "Disrupt the Block pairs exceptional properties with blockchain infrastructure.",
+  favicon: null,
+  defaultSeo: null,
+  footerText: null,
+  contactEmail: null,
+  contactPhone: null,
+  socialLinks: [],
+};
+
 // ── Intake facade object ────────────────────────────────────────────────────
 
 export const intake = {
@@ -116,14 +130,15 @@ export const intake = {
     try {
       const response = await strapiFetch(path, AboutResponseSchema, {
         revalidate: 0,
-        useToken: true,
       });
 
       return response.data;
     } catch (error) {
-      // Single types return 404 when no entry exists (content not seeded yet).
-      // Return empty fallback instead of crashing the page.
+      // Return empty fallback when About content is missing.
       if (error instanceof StrapiError && error.status === 404) {
+        console.warn(
+          `Failed to fetch About content (status: ${error.status}). Falling back to EMPTY_ABOUT.`,
+        );
         return EMPTY_ABOUT;
       }
 
@@ -139,13 +154,24 @@ export const intake = {
   async global(): Promise<Global> {
     const path = "/api/global?populate=*";
 
-    const response = await strapiFetch(path, GlobalResponseSchema, {
-      revalidate: 0,
-      useToken: true,
-      tags: ["global"],
-    });
+    try {
+      const response = await strapiFetch(path, GlobalResponseSchema, {
+        revalidate: 0,
+        tags: ["global"],
+      });
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      // Return fallback metadata when global settings are missing.
+      if (error instanceof StrapiError && error.status === 404) {
+        console.warn(
+          `Failed to fetch Global settings (status: ${error.status}). Falling back to EMPTY_GLOBAL.`,
+        );
+        return EMPTY_GLOBAL;
+      }
+
+      throw error;
+    }
   },
 
   /**
