@@ -2,15 +2,6 @@
 
 import { useState } from "react";
 
-interface Activity {
-  ref: string;
-  name: string;
-  category: string;
-  description: string;
-  metadata: string;
-  locationContext: string;
-}
-
 const CATEGORIES = [
   "All",
   "Maya_Heritage",
@@ -20,6 +11,18 @@ const CATEGORIES = [
   "Nature_Wildlife",
   "Culture_Lifestyle",
 ] as const;
+
+type Category = (typeof CATEGORIES)[number];
+type ActivityCategory = Exclude<Category, "All">;
+
+interface Activity {
+  ref: string;
+  name: string;
+  category: ActivityCategory;
+  description: string;
+  metadata: string;
+  locationContext: string;
+}
 
 const ACTIVITIES: Activity[] = [
   { ref: "CYO_01", name: "Xunantunich", category: "Maya_Heritage", description: "Classic-period ceremonial site atop a limestone ridge overlooking the Mopan River.", metadata: "Hand-cranked ferry", locationContext: "~15 min from San Ignacio" },
@@ -50,7 +53,7 @@ const PRACTICAL_ACCESS = [
 ];
 
 export function ThingsToDoCayo() {
-  const [activeCategory, setActiveCategory] = useState<string>("Maya_Heritage");
+  const [activeCategory, setActiveCategory] = useState<Category>("Maya_Heritage");
 
   const filtered =
     activeCategory === "All"
@@ -76,6 +79,7 @@ export function ThingsToDoCayo() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
+              aria-pressed={activeCategory === cat}
               className={`rounded-full px-4 py-2 font-sans text-[10px] font-medium uppercase tracking-widest transition-all duration-500 ${
                 activeCategory === cat
                   ? "bg-primary text-background"
@@ -89,7 +93,7 @@ export function ThingsToDoCayo() {
 
         <div className="rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
           <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass overflow-hidden">
-            <div className="grid grid-cols-12 px-6 py-6 border-b border-white/10 font-sans text-[9px] uppercase tracking-[0.3em] text-secondary/30">
+            <div className="hidden md:grid grid-cols-12 px-6 py-6 border-b border-white/10 font-sans text-[9px] uppercase tracking-[0.3em] text-secondary/30">
               <div className="col-span-1 font-black">Ref</div>
               <div className="col-span-4 font-black">Activity</div>
               <div className="col-span-3 font-black">Category</div>
@@ -100,12 +104,12 @@ export function ThingsToDoCayo() {
             {filtered.map((activity) => (
               <div
                 key={activity.ref}
-                className="grid grid-cols-12 px-6 py-8 items-center border-b border-primary/10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] last:border-b-0 hover:bg-primary/[0.03] hover:pl-10 hover:border-primary/40 group"
+                className="grid grid-cols-1 gap-5 px-6 py-8 border-b border-primary/10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] last:border-b-0 hover:bg-primary/[0.03] md:grid-cols-12 md:items-center md:gap-0 md:hover:pl-10 hover:border-primary/40 group"
               >
-                <div className="col-span-1 font-sans text-xs text-primary/50 font-black">
+                <div className="font-sans text-xs text-primary/50 font-black md:col-span-1">
                   {activity.ref}
                 </div>
-                <div className="col-span-4">
+                <div className="md:col-span-4">
                   <h2 className="text-xl md:text-3xl font-display font-black uppercase tracking-tighter text-primary">
                     {activity.name}
                   </h2>
@@ -113,17 +117,26 @@ export function ThingsToDoCayo() {
                     {activity.description}
                   </p>
                 </div>
-                <div className="col-span-3">
+                <div className="md:col-span-3">
+                  <span className="mb-2 block font-sans text-[9px] font-black uppercase tracking-[0.3em] text-secondary/30 md:hidden">
+                    Category
+                  </span>
                   <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-secondary/60">
-                    {activity.category}
+                    {activity.category.replace(/_/g, " ")}
                   </span>
                 </div>
-                <div className="col-span-2">
+                <div className="md:col-span-2">
+                  <span className="mb-2 block font-sans text-[9px] font-black uppercase tracking-[0.3em] text-secondary/30 md:hidden">
+                    Access
+                  </span>
                   <p className="font-sans text-[10px] uppercase tracking-widest text-secondary/40">
                     {activity.metadata}
                   </p>
                 </div>
-                <div className="col-span-2 text-right">
+                <div className="md:col-span-2 md:text-right">
+                  <span className="mb-2 block font-sans text-[9px] font-black uppercase tracking-[0.3em] text-secondary/30 md:hidden">
+                    Location
+                  </span>
                   <p className="font-sans text-[10px] uppercase tracking-widest text-secondary/40">
                     {activity.locationContext}
                   </p>
