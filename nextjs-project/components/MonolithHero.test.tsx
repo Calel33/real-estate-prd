@@ -48,6 +48,10 @@ describe("MonolithHero", () => {
   it("renders description text", () => {
     render(<MonolithHero tagline="Real Assets. Digital Future." />);
 
-    expect(screen.getByText(/Real estate built for the century ahead/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Premium real estate\. On-chain liquidity\. Property that trades like any asset should\./i
+      )
+    ).toBeInTheDocument();
   });
 });

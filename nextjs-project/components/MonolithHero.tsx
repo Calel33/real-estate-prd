@@ -15,7 +15,7 @@ export function MonolithHero({
   property,
   strapiUrl,
   headline = "DISRUPT\nTHE BLOCK",
-  description = "Real estate built for the century ahead. We pair premium properties with the infrastructure to bring assets on chain so land is as easy to trade as anything else.",
+  description = "Premium real estate. On-chain liquidity. Property that trades like any asset should.",
 }: MonolithHeroProps) {
   const heroImageUrl =
     property?.heroImage?.url
