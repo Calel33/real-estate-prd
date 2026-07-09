@@ -3,6 +3,8 @@ import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
 import { ContactForm } from "@/components/ContactForm";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const globalData = await intake.global();
 
