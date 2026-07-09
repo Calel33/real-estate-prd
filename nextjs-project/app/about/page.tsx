@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
+import { getGlobalMetadata } from "@/lib/metadata";
 import { DynamicZoneRenderer } from "@/components/DynamicZoneRenderer";
 
 /** Render at request time — Strapi content may change frequently. */
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await intake.global();
+  const globalData = await getGlobalMetadata();
 
   return {
     title:

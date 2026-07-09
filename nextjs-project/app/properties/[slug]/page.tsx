@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { intake } from "@/lib/intake";
 import { getEnv } from "@/lib/env";
+import { getGlobalMetadata } from "@/lib/metadata";
 import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
 import { HeroSection } from "@/components/HeroSection";
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const [property, globalData] = await Promise.all([
     intake.property(slug),
-    intake.global(),
+    getGlobalMetadata(),
   ]);
 
   if (!property) {
