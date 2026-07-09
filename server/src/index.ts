@@ -100,6 +100,11 @@ export default {
     // Only seed in development
     if (process.env.NODE_ENV !== 'development') return;
 
+    // Always ensure public permissions exist in development.
+    // About can be added after initial seed, so permissions must not depend
+    // on property seed state.
+    await setPublicPermissions(strapi);
+
     // Check if already seeded
     const existingProperties = await strapi.documents('api::property.property').findMany({});
     if (existingProperties.length > 0) {
@@ -113,8 +118,6 @@ export default {
       await seedProperty(strapi);
       await seedSubmission(strapi);
       await seedGlobal(strapi);
-      // Also set public permissions
-      await setPublicPermissions(strapi);
       console.log('Seed complete!');
     } catch (error) {
       console.error('Seed failed:', error);

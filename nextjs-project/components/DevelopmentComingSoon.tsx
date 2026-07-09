@@ -12,10 +12,10 @@ export function DevelopmentComingSoon() {
               </div>
               <div>
                 <h3 className="font-sans text-sm font-black uppercase tracking-[0.2em] text-primary mb-1">
-                  Master Plan in Progress
+                  Emri Village — Private Preview
                 </h3>
                 <p className="font-sans text-[10px] uppercase tracking-[0.05em] leading-loose text-secondary/40">
-                  Emri Village is being elevated to a luxury standard. Plot availability coming soon.
+                  Premium lots within Emri Village, developed to a new standard. Availability is limited — join the waitlist for priority access.
                 </p>
               </div>
             </div>
