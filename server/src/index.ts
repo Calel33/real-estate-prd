@@ -103,7 +103,11 @@ export default {
     // Always ensure public permissions exist in development.
     // About can be added after initial seed, so permissions must not depend
     // on property seed state.
-    await setPublicPermissions(strapi);
+    try {
+      await setPublicPermissions(strapi);
+    } catch (error) {
+      console.error('Failed to set public permissions:', error);
+    }
 
     // Check if already seeded
     const existingProperties = await strapi.documents('api::property.property').findMany({});
