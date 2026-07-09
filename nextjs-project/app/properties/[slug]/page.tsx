@@ -67,12 +67,13 @@ export default async function PropertyDetailPage({ params }: Props) {
     ? `${mapLatitude},${mapLongitude}`
     : mapLocation;
   const geographicContext = location;
+  const isEmriVillage = slug === "emri-village";
 
   return (
     <>
       {/* Hero Section */}
       <HeroSection property={property} strapiUrl={strapiUrl}>
-        {slug === "emri-village" ? (
+        {isEmriVillage ? (
           <></>
         ) : (
           <>
@@ -181,34 +182,42 @@ export default async function PropertyDetailPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Gallery Grid with Lightbox */}
+      <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />
+
       {/* Location Map */}
       {(mapQuery || mapImage) && (
         <section aria-label="Property map" className="py-16 md:py-24">
           <div className="mx-auto max-w-7xl px-6">
-            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary/50 mb-6 block font-black">
+              Geographic_Context
+            </span>
+            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight uppercase tracking-tighter">
               Location
             </h2>
-            <div className="mt-12 mx-auto w-full max-w-4xl relative aspect-[3/2] overflow-hidden rounded-2xl border border-white/10 bg-surface/40 shadow-glass">
-              {mapQuery ? (
-                <iframe
-                  title={`Map of ${title}`}
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
-                  className="h-full w-full"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              ) : mapImage ? (
-                <Image
-                  src={mapImage.url.startsWith("http") ? mapImage.url : `${strapiUrl}${mapImage.url}`}
-                  alt={mapImage.alternativeText ?? `Map of ${title}`}
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 896px"
-                  className="object-cover"
-                />
-              ) : null}
+            <div className="mt-12 mx-auto w-full max-w-4xl rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
+              <div className="relative aspect-[3/2] overflow-hidden rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass">
+                {mapQuery ? (
+                  <iframe
+                    title={`Map of ${title}`}
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`}
+                    className="h-full w-full"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                ) : mapImage ? (
+                  <Image
+                    src={mapImage.url.startsWith("http") ? mapImage.url : `${strapiUrl}${mapImage.url}`}
+                    alt={mapImage.alternativeText ?? `Map of ${title}`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 896px"
+                    className="object-cover"
+                  />
+                ) : null}
+              </div>
             </div>
             {map?.place_name && (
-              <p className="mt-6 text-center font-sans text-xs uppercase tracking-[0.15em] text-secondary/40">
+              <p className="mt-6 text-center font-sans text-[10px] font-black uppercase tracking-[0.2em] text-secondary/40">
                 {map.place_name}
               </p>
             )}
@@ -216,12 +225,9 @@ export default async function PropertyDetailPage({ params }: Props) {
         </section>
       )}
 
-      {slug === "emri-village" && <DevelopmentComingSoon />}
+      {isEmriVillage && <DevelopmentComingSoon />}
 
-      {/* Gallery Grid with Lightbox */}
-      <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />
-
-      {slug === "emri-village" && <ThingsToDoCayo />}
+      {isEmriVillage && <ThingsToDoCayo />}
 
       {/* Contact CTA */}
       <section
@@ -230,10 +236,13 @@ export default async function PropertyDetailPage({ params }: Props) {
       >
         <div className="mx-4 rounded-glass-shell bg-gradient-to-br from-white/30 via-white/5 to-transparent p-[1px]">
           <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-16 md:py-20 flex flex-col items-center text-center gap-6">
-            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight">
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-primary/50 block font-black">
+              Private_Showing_Request
+            </span>
+            <h2 className="font-display font-black text-primary text-3xl md:text-5xl leading-tight uppercase tracking-tighter">
               Interested in this property?
             </h2>
-            <p className="text-secondary/70 text-lg md:text-xl max-w-lg font-sans">
+            <p className="text-secondary/70 text-lg md:text-xl max-w-lg font-sans leading-relaxed">
               Get in touch with us to schedule a viewing or learn more about this
               exceptional offering.
             </p>
