@@ -9,6 +9,7 @@ import { StrapiBlocksRenderer } from "@/components/StrapiBlocksRenderer";
 import { GalleryWithLightbox } from "@/components/GalleryWithLightbox";
 import { HeroSection } from "@/components/HeroSection";
 import { DevelopmentComingSoon } from "@/components/DevelopmentComingSoon";
+import { ThingsToDoCayo } from "@/components/ThingsToDoCayo";
 
 /** Render at request time — Strapi may not be available during build. */
 export const dynamic = "force-dynamic";
@@ -219,6 +220,8 @@ export default async function PropertyDetailPage({ params }: Props) {
 
       {/* Gallery Grid with Lightbox */}
       <GalleryWithLightbox images={gallery ?? []} strapiUrl={strapiUrl} />
+
+      {slug === "emri-village" && <ThingsToDoCayo />}
 
       {/* Contact CTA */}
       <section
