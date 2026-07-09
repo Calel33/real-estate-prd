@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function DevelopmentComingSoon() {
   return (
     <section className="py-12 md:py-16">
@@ -17,9 +19,12 @@ export function DevelopmentComingSoon() {
                 </p>
               </div>
             </div>
-            <button className="shrink-0 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 font-sans text-[10px] uppercase tracking-widest text-secondary hover:bg-white/10 transition-colors duration-500">
+            <Link
+              href="/contact"
+              className="shrink-0 rounded-full border border-white/10 bg-white/5 px-6 py-2.5 font-sans text-[10px] uppercase tracking-widest text-secondary hover:bg-white/10 transition-colors duration-500"
+            >
               Join Waitlist
-            </button>
+            </Link>
           </div>
         </div>
       </div>

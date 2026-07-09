@@ -363,6 +363,7 @@ describe("intake.about", () => {
   });
 
   it("returns EMPTY_ABOUT on 404", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -375,6 +376,9 @@ describe("intake.about", () => {
 
     const about = await intake.about();
     expect(about).toEqual(EMPTY_ABOUT);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Failed to fetch About content (status: 404). Falling back to EMPTY_ABOUT.",
+    );
   });
 
   it("throws on forbidden public access", async () => {
@@ -435,6 +439,7 @@ describe("intake.global", () => {
   });
 
   it("returns EMPTY_GLOBAL on 404", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({
@@ -447,6 +452,9 @@ describe("intake.global", () => {
 
     const global = await intake.global();
     expect(global).toEqual(EMPTY_GLOBAL);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Failed to fetch Global settings (status: 404). Falling back to EMPTY_GLOBAL.",
+    );
   });
 
   it("throws on forbidden public access", async () => {

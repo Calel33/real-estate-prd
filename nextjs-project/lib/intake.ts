@@ -136,6 +136,9 @@ export const intake = {
     } catch (error) {
       // Return empty fallback when About content is missing.
       if (error instanceof StrapiError && error.status === 404) {
+        console.warn(
+          `Failed to fetch About content (status: ${error.status}). Falling back to EMPTY_ABOUT.`,
+        );
         return EMPTY_ABOUT;
       }
 
@@ -161,6 +164,9 @@ export const intake = {
     } catch (error) {
       // Return fallback metadata when global settings are missing.
       if (error instanceof StrapiError && error.status === 404) {
+        console.warn(
+          `Failed to fetch Global settings (status: ${error.status}). Falling back to EMPTY_GLOBAL.`,
+        );
         return EMPTY_GLOBAL;
       }
 

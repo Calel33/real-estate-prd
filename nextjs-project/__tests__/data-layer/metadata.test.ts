@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { StrapiError } from "@/lib/fetch";
 
 const { emptyGlobal } = vi.hoisted(() => ({
@@ -32,6 +32,10 @@ describe("getGlobalMetadata", () => {
     vi.mocked(intake.global).mockReset();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("returns global data on success", async () => {
     vi.mocked(intake.global).mockResolvedValue({
       ...emptyGlobal,
@@ -46,11 +50,15 @@ describe("getGlobalMetadata", () => {
   });
 
   it("returns metadata fallback on forbidden global settings", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.mocked(intake.global).mockRejectedValue(
       new StrapiError(403, "Forbidden", "Forbidden"),
     );
 
     await expect(getGlobalMetadata()).resolves.toEqual(emptyGlobal);
+    expect(warnSpy).toHaveBeenCalledWith(
+      "Failed to fetch Global metadata (status: 403). Falling back to EMPTY_GLOBAL.",
+    );
   });
 
   it("rethrows non-auth Strapi errors", async () => {

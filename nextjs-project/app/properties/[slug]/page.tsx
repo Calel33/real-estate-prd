@@ -65,20 +65,26 @@ export default async function PropertyDetailPage({ params }: Props) {
   const mapQuery = hasMapCoordinates
     ? `${mapLatitude},${mapLongitude}`
     : mapLocation;
-  const geographicContext =
-    slug === "emri-village"
-      ? "Utility-ready parcel with direct highway access, just 20 minutes from Belmopan."
-      : location;
-  const geographicContextList =
-    slug === "emri-village"
-      ? ["Utility-ready parcel", "Direct highway access", "Just 20 minutes from Belmopan"]
-      : null;
+  const geographicContext = location;
 
   return (
     <>
       {/* Hero Section */}
       <HeroSection property={property} strapiUrl={strapiUrl}>
-        <></>
+        {slug === "emri-village" ? (
+          <></>
+        ) : (
+          <>
+            <h1 className="font-display font-black text-5xl md:text-8xl text-primary leading-tight mt-2">
+              {title}
+            </h1>
+            {location && (
+              <p className="mt-4 text-secondary/70 text-lg md:text-xl font-sans">
+                {location}
+              </p>
+            )}
+          </>
+        )}
       </HeroSection>
 
       {/* Property Description — Monolith layout (ported from Emri Village reference) */}
@@ -138,15 +144,7 @@ export default async function PropertyDetailPage({ params }: Props) {
                     if (location) {
                       highlights.push({
                         label: "Geographic_Context",
-                        content: geographicContextList ? (
-                          <ul className="list-disc pl-4 space-y-1">
-                            {geographicContextList.map((item) => (
-                              <li key={item}>{item}</li>
-                            ))}
-                          </ul>
-                        ) : (
-                          geographicContext
-                        ),
+                        content: geographicContext,
                       });
                     }
 

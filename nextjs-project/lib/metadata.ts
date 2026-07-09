@@ -10,6 +10,9 @@ export async function getGlobalMetadata(): Promise<Global> {
       error instanceof StrapiError &&
       (error.status === 401 || error.status === 403)
     ) {
+      console.warn(
+        `Failed to fetch Global metadata (status: ${error.status}). Falling back to EMPTY_GLOBAL.`,
+      );
       return EMPTY_GLOBAL;
     }
 
