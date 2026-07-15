@@ -26,7 +26,7 @@ ENV PATH=/opt/node_modules/.bin:$PATH
 
 WORKDIR /opt/app
 COPY --from=build /opt/app ./
-RUN chown -R node:node /opt/app
+RUN mkdir -p .tmp public/uploads && chown -R node:node /opt/app
 USER node
 
 EXPOSE 1337
