@@ -27,6 +27,7 @@ function parseStrapiHost(url: string | undefined): {
 const strapiHost = parseStrapiHost(process.env.STRAPI_URL);
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   turbopack: {
     root: ".",
   },
