@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+# STRAPI_URL is required at build time (parsed from next.config.ts)
+# Set it as a build variable in Railway:
+#   railway variables set STRAPI_URL=https://your-strapi.railway.app
+
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"

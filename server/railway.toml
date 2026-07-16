@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+
+[deploy]
+healthcheckPath = "/_health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+
+[volumes]
+# Persistent uploads and temp data
+"/opt/app/public/uploads" = "uploads"
+"/opt/app/.tmp" = "tmp"
