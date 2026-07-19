@@ -1,13 +1,14 @@
 # syntax=docker/dockerfile:1
-ARG NODE_VERSION=24.13.0-slim
+ARG NODE_VERSION=22-slim
 
-FROM node:${NODE_VERSION} AS dependencies
+FROM node:${NODE_VERSION} AS base
 WORKDIR /app
+
+FROM base AS dependencies
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-FROM node:${NODE_VERSION} AS builder
-WORKDIR /app
+FROM base AS builder
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
@@ -19,7 +20,7 @@ ENV STRAPI_URL=${STRAPI_URL}
 
 RUN npm run build
 
-FROM node:${NODE_VERSION} AS runner
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -27,22 +28,10 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder --chown=node:node /app/public ./public
-
-RUN mkdir .next
-RUN chown node:node .next
-
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-
-COPY --from=dependencies /app/package-lock.json ./
-RUN npm ci --omit=dev --no-audit --no-fund
-
-USER node
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-    CMD node -e "var p=process.env.PORT||3000;fetch('http://localhost:'+p+'/api/health').then(function(r){process.exit(r.ok?0:1)}).catch(function(){process.exit(1)})"
 
 CMD ["node", "server.js"]
