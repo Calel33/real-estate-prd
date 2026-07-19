@@ -27,9 +27,6 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=dependencies /app/package.json /app/package-lock.json ./
-RUN npm ci --omit=dev --no-audit --no-fund
-
 COPY --from=builder --chown=node:node /app/public ./public
 
 RUN mkdir .next
@@ -37,6 +34,9 @@ RUN chown node:node .next
 
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
+COPY --from=dependencies /app/package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
 
 USER node
 
