@@ -4,6 +4,11 @@ const config = ({ env }: { env: any }): Record<string, any> => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  transfer: {
+    remote: {
+      enabled: env.bool('TRANSFER_REMOTE_ENABLED', false),
+    },
+  },
 });
 
 export default config;
