@@ -9,6 +9,9 @@ const config = ({ env }: { env: any }): Record<string, any> => ({
     token: {
       salt: env('TRANSFER_TOKEN_SALT'),
     },
+    remote: {
+      enabled: env.bool('STRAPI_ENABLE_REMOTE_TRANSFER', true),
+    },
   },
   secrets: {
     encryptionKey: env('ENCRYPTION_KEY'),
