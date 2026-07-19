@@ -6,7 +6,7 @@ const config = ({ env }: { env: any }): Record<string, any> => ({
   },
   transfer: {
     remote: {
-      enabled: env.bool('TRANSFER_REMOTE_ENABLED', false),
+      enabled: true,
     },
   },
 });
