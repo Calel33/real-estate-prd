@@ -4,6 +4,14 @@ const config = ({ env }: { env: any }): Record<string, any> => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  transfer: {
+    token: {
+      salt: env('TRANSFER_TOKEN_SALT'),
+    },
+    remote: {
+      enabled: true,
+    },
+  },
 });
 
 export default config;

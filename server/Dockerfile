@@ -12,7 +12,6 @@ ENV PATH=/opt/node_modules/.bin:$PATH
 
 WORKDIR /opt/app
 COPY . .
-RUN echo "BUILD_COMMIT=f9283af" && echo "=== config/env/production/admin.ts ===" && cat config/env/production/admin.ts && echo "=== end ==="
 
 ENV NODE_ENV=production
 RUN npm run build

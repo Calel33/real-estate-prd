@@ -9,9 +9,6 @@ const config = ({ env }: { env: any }): Record<string, any> => ({
     token: {
       salt: env('TRANSFER_TOKEN_SALT'),
     },
-    remote: {
-      enabled: true,
-    },
   },
   secrets: {
     encryptionKey: env('ENCRYPTION_KEY'),
