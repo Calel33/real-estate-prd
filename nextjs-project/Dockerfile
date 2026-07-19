@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 ARG NODE_VERSION=24.13.0-slim
 
 FROM node:${NODE_VERSION} AS dependencies
