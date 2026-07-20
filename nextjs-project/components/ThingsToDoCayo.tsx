@@ -152,29 +152,31 @@ export function ThingsToDoCayo() {
           </div>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-          <div className="lg:col-span-12">
-            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 mb-8 block font-black italic">
+        <div className="mt-16">
+          <div className="mb-8">
+            <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 block font-black italic">
               Practical_Access
             </span>
           </div>
-          {PRACTICAL_ACCESS.map((item, i) => (
-            <div key={item.label} className="lg:col-span-3 rounded-glass-shell bg-gradient-to-br from-white/20 via-white/5 to-transparent p-[1px]">
-              <div className="h-full rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass p-6 flex items-start gap-4">
-                <span className="font-sans text-[10px] text-primary/60 flex-shrink-0">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <p className="font-sans text-xs font-black uppercase tracking-widest text-secondary/90 mb-1">
-                    {item.label}
-                  </p>
-                  <p className="font-sans text-[10px] uppercase tracking-[0.05em] text-secondary/40 leading-loose">
-                    {item.content}
-                  </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {PRACTICAL_ACCESS.map((item) => (
+              <div key={item.label} className="rounded-glass-shell bg-gradient-to-r from-primary/20 via-white/5 to-transparent p-[1px]">
+                <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-8 flex items-start gap-5 h-full">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-white/10 shadow-glass shrink-0 mt-0.5">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                  </div>
+                  <div>
+                    <p className="font-sans text-sm font-black uppercase tracking-[0.2em] text-primary mb-2">
+                      {item.label}
+                    </p>
+                    <p className="font-sans text-[10px] uppercase tracking-[0.05em] leading-loose text-secondary/40">
+                      {item.content}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
