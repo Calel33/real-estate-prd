@@ -46,9 +46,9 @@ const ACTIVITIES: Activity[] = [
 ];
 
 const PRACTICAL_ACCESS = [
-  { label: "Airport_Access", content: "BZE to San Ignacio ~110 km / ~2 hr via George Price Highway" },
-  { label: "Best_Season", content: "December to May (dry season). Dec to Jan peak pleasantness" },
-  { label: "Hub_Status", content: "San Ignacio is walkable and widely regarded as safe" },
+  { label: "Airport_Access", content: "Philip Goldson International (BZE) to San Ignacio: ~110 km / 2–2.5 hr via the George Price Highway. Private shuttles, rental cars, and domestic flights to Maya Flats (CYD) available." },
+  { label: "Best_Season", content: "November through April: the dry season. Clear skies, lower humidity, and optimal access to Maya ruins, cave systems, and jungle terrain." },
+  { label: "Hub_Status", content: "San Ignacio is the cultural and economic hub of the Cayo District. The compact downtown is walkable and widely regarded as one of Belize\u2019s safest inland towns." },
 ];
 
 export function ThingsToDoCayo() {
