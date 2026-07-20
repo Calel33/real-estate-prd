@@ -49,7 +49,6 @@ const PRACTICAL_ACCESS = [
   { label: "Airport_Access", content: "BZE to San Ignacio ~110 km / ~2 hr via George Price Highway" },
   { label: "Best_Season", content: "December to May (dry season). Dec to Jan peak pleasantness" },
   { label: "Hub_Status", content: "San Ignacio is walkable and widely regarded as safe" },
-  { label: "Source_Basis", content: "Travel Belize, public destination references, and local operator materials" },
 ];
 
 export function ThingsToDoCayo() {

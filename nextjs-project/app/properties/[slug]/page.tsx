@@ -243,8 +243,7 @@ export default async function PropertyDetailPage({ params }: Props) {
               Interested in this property?
             </h2>
             <p className="text-secondary/70 text-lg md:text-xl max-w-lg font-sans leading-relaxed">
-              Get in touch with us to schedule a viewing or learn more about this
-              exceptional offering.
+              Schedule a private viewing.
             </p>
             <Link
               href="/contact"

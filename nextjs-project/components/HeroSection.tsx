@@ -34,7 +34,14 @@ export function HeroSection({ property, strapiUrl, children }: HeroSectionProps)
           poster={heroImage ? (heroImage.url.startsWith("http") ? heroImage.url : `${strapiUrl}${heroImage.url}`) : undefined}
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src={`/api/media?url=${encodeURIComponent(heroVideo.url)}`} type={heroVideo.mime} />
+          <source
+            src={
+              heroVideo.url.startsWith("http")
+                ? heroVideo.url
+                : `${strapiUrl}${heroVideo.url}`
+            }
+            type={heroVideo.mime}
+          />
         </video>
       ) : heroImage ? (
         <Image
