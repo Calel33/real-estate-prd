@@ -55,7 +55,7 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
 
   const strapiUrl = getEnv().STRAPI_URL;
-  const { title, location, acreage, propertyType, description, gallery, map, mapImage } = property;
+  const { title, location, acreage, propertyType, description, gallery, map, mapImage, plusCode } = property;
   const mapCoordinates = map?.geometry?.coordinates;
   const mapLongitude = mapCoordinates?.[0];
   const mapLatitude = mapCoordinates?.[1];
