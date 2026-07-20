@@ -46,6 +46,8 @@ const ACTIVITIES: Activity[] = [
   { ref: "CYO_18", name: "San Antonio Cooperative", category: "Culture_Lifestyle", description: "Led by Maya women in San Antonio Village. Hands-on tortilla-making, fire-hearth cooking, and ancient pottery workshops. Proceeds support local artisans and girls\u2019 education.", metadata: "Cultural immersion", locationContext: "San Antonio Village", url: "https://planeterra.org/san-antonio-womens-co-op/" },
 ];
 
+const ACCESS_CARD_DELAYS = ["animation-delay-200", "animation-delay-400", "animation-delay-600"] as const;
+
 const PRACTICAL_ACCESS = [
   { label: "Airport_Access", content: "Philip Goldson International (BZE) to San Ignacio: ~110 km / 2–2.5 hr via the George Price Highway. Private shuttles, rental cars, and domestic flights to Maya Flats (CYD) available." },
   { label: "Best_Season", content: "November through April: the dry season. Clear skies, lower humidity, and optimal access to Maya ruins, cave systems, and jungle terrain." },
@@ -153,14 +155,14 @@ export function ThingsToDoCayo() {
         </div>
 
         <div className="mt-16">
-          <div className="mb-8">
+          <div className="mb-8 animate-slide-up animation-delay-100 opacity-0">
             <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-secondary/30 block font-black italic">
-              Practical_Access
+              Plan_Your_Visit
             </span>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {PRACTICAL_ACCESS.map((item) => (
-              <div key={item.label} className="rounded-glass-shell bg-gradient-to-r from-primary/20 via-white/5 to-transparent p-[1px]">
+            {PRACTICAL_ACCESS.map((item, i) => (
+              <div key={item.label} className={`rounded-glass-shell bg-gradient-to-r from-primary/20 via-white/5 to-transparent p-[1px] animate-slide-up opacity-0 ${ACCESS_CARD_DELAYS[i]}`}>
                 <div className="rounded-glass bg-surface/50 backdrop-blur-[4px] shadow-glass px-6 py-8 flex items-start gap-5 h-full">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-white/10 shadow-glass shrink-0 mt-0.5">
                     <span className="w-2 h-2 rounded-full bg-primary" />
