@@ -15,7 +15,6 @@ const envSchema = z.object({
     .string()
     .email("ADMIN_NOTIFICATION_EMAIL must be a valid email")
     .optional(),
-  NEXT_PUBLIC_MAPBOX_TOKEN: z.string().min(1, "NEXT_PUBLIC_MAPBOX_TOKEN is required").optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

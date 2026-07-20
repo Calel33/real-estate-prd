@@ -6,26 +6,17 @@ const nullableNumberFromStrapi = z.preprocess(
   z.coerce.number().nullable(),
 );
 
-export const PropertyMapSchema = z.preprocess(
-  (value) => {
-    if (typeof value === "string") {
-      try { return JSON.parse(value); } catch { return null; }
-    }
-    return value;
-  },
-  z
-    .object({
-      place_name: z.string().optional(),
-      geometry: z
-        .object({
-          type: z.string().optional(),
-          coordinates: z.tuple([z.number(), z.number()]),
-        })
-        .optional(),
-    })
-    .passthrough()
-    .nullable()
-);
+export const PropertyMapSchema = z
+  .object({
+    place_name: z.string().optional(),
+    geometry: z
+      .object({
+        type: z.string().optional(),
+        coordinates: z.tuple([z.number(), z.number()]),
+      })
+      .optional(),
+  })
+  .passthrough();
 
 export const PropertySchema = z.object({
   id: z.number(),
@@ -46,7 +37,6 @@ export const PropertySchema = z.object({
   mapImage: StrapiMediaSchema.nullable(),
   propertyId: z.string().nullable(),
   ownership: z.string().nullable(),
-  plusCode: z.string().nullable().optional(),
   status: z.enum(["draft", "published"]),
   publishedAt: z.string().nullable(),
   createdAt: z.string(),

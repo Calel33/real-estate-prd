@@ -71,13 +71,9 @@
       ]
     },
     "map": {
-      "type": "json",
-      "required": false
-    },
-    "plusCode": {
-      "type": "string",
-      "maxLength": 255,
-      "required": false
+      "type": "customField",
+      "required": false,
+      "customField": "plugin::map-field.map-field"
     },
     "mapImage": {
       "type": "media",
