@@ -5,7 +5,7 @@ export const SeoSchema = z.object({
   id: z.number(),
   metaTitle: z.string(),
   metaDescription: z.string(),
-  shareImage: StrapiMediaSchema.nullable(),
+  shareImage: StrapiMediaSchema.nullish(),
 });
 
 export type Seo = z.infer<typeof SeoSchema>;
