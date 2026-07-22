@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { ConditionalNavbar, ConditionalFooter } from "@/components/ConditionalNavbar";
+import { getGlobalMetadata } from "@/lib/metadata";
+import { getEnv } from "@/lib/env";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -15,11 +17,24 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Disrupt the Block — Premium Real Estate for a Digital Future",
-  description:
-    "Disrupt the Block pairs exceptional properties with blockchain infrastructure. Explore our portfolio of premium real estate, built for the next era of ownership.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const globalData = await getGlobalMetadata();
+  const favicon = globalData.favicon;
+
+  return {
+    title: globalData.siteName ?? "Disrupt the Block",
+    description:
+      globalData.siteDescription ??
+      "Disrupt the Block pairs exceptional properties with blockchain infrastructure. Explore our portfolio of premium real estate, built for the next era of ownership.",
+    icons: favicon
+      ? {
+          icon: favicon.url.startsWith("http")
+            ? favicon.url
+            : `${getEnv().STRAPI_URL}${favicon.url}`,
+        }
+      : undefined,
+  };
+}
 
 export default function RootLayout({
   children,
